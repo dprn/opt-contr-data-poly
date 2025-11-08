@@ -1727,7 +1727,7 @@
      Here,  $A\in \bbR^{m\times d}$, while $f$ and $g$ are convex function, with $f$ typically smooth, and $g$ non-smooth.
  
      If $P_{g\circ A}$ is simple to compute, this problem can be solved by applying the proximal gradient method of the previous section.
-     However, we can encounter situations where, although $g$ has a simple proximal operatr, the proximal operator of ${g\circ A}$ is very hard to compute.
+     However, we can encounter situations where, although $g$ has a simple proximal operator, the proximal operator of ${g\circ A}$ is very hard to compute.
      In this section we see that, however, considering the dual problem allows to circumvent this issue.
  
      \ex{Signal denoising using total variation}{
@@ -1748,7 +1748,7 @@
                  x_2 - x_1 \\
                  x_3 - x_2 \\
                  \vdots    \\
-                 x_n - x_{d-1}
+                 x_d - x_{d-1}
              \end{bmatrix}.
          \]
      }
@@ -1792,7 +1792,7 @@
  
      We see that the dual problem concerns now the function $f^*\circ (-A^\top)$, which inherits the good properties of $f$, and $g^*$, whose proximal operator is easy to compute. Indeed, thanks to Moreau's identity (Theorem~\ref{th:moreau-ident}) we have
  \begin{equation}
-     P_{g^*}(y) = y - P_g(y), \qquad \forall y\ in \bbR^d.
+     P_{g^*}(y) = y - P_g(y), \qquad \forall y \in \bbR^d.
  \end{equation}
  We thus have the following.
  
