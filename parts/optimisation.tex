@@ -1094,19 +1094,26 @@
          The non-negativity assumption on $F_1$ can be removed by replacing $F_1(x)$ in \eqref{eq:op-lambda} by $\min\{0,F_1(x)\}$.
      \end{remark}
  
+     \section{Karush-Kuhn-Tucker (KKT) conditions}
+
+        The Karush-Kuhn-Tucker (KKT) conditions provide necessary (and under suitable assumptions also sufficient) optimality conditions for constrained optimization problems, extending the saddle-point property discussed in Theorem~\ref{th:saddle-point}. See \cite{rudinConvex} for a proof and more details.
+
+        \thm[kkt]{Karush-Kuhn-Tucker (KKT) Theorem}{
+            Consider the convex optimization problem \eqref{eq:op} and assume that $F_0,\ldots, F_M$ are differentiable functions.
+            Assume that $(x^\star,\xi^\star,\nu^\star)\in \bbR^d\times \bbR^m\times \bbR^M$ satisfies the following conditions:
+            \begin{itemize}
+                \item Primal feasibility: $Ax^\star = y$ and $F_j(x^\star)\le 0$ for any $j\in \llbracket1,M\rrbracket$;
+                \item Dual feasibility: $\nu_j^\star \ge 0$ for any $j\in \llbracket1,M\rrbracket$;
+                \item Complementary slackness: $\nu_j^\star F_j(x^\star) = 0$ for any $j\in \llbracket1,M\rrbracket$;
+                \item Stationarity: it holds
+                      \begin{equation}
+                          \nabla F_0(x^\star) + A^\top \xi^\star + \sum_{j=1}^M \nu_j^\star \nabla F_j(x^\star) = 0.
+                      \end{equation}
+            \end{itemize}
+            Then, $(x^\star,\xi^\star,\nu^\star)$ is a primal-dual optimal for \eqref{eq:op}.
+            If, moreover, strong duality holds, then any primal-dual optimal satisfies the above conditions.
+        }
  
- 
-     % \dfn{Definition Topic}{Definition Statement}
-     % \thm{Theorem Name}{Theorem Statement}
-     % \cor[cori]{Corollary Name}{Corollary Statement}
-     % \lem{Lemma Name}{Lemma Statement}
-     % \clm{Claim Name}{Claim Statement}
-     % \ex{Example Name}{Example explained}
-     % \opn{Open Question Name}{Question Statement}
-     % \qs{Question Name}{Question Statement}
-     % \nt{Special Note}
-     % \wc{Wrong Concept topic}{Explanation}
-     % \pf{Proof}{Proof}
  
      \chapter{Numerical methods for (non)convex optimization}
      \label{chp:numerical-algo}
