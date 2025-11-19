@@ -1803,7 +1803,7 @@
          \begin{cases}
              x_{n+1} = \arg\min_{x\in \bbR^d} \left[ f(x) + \langle z_n, Ax \rangle \right],                             \\
              y_{n+1} = \arg\min_{y\in\bbR^m} \left[ g(y) -\langle z_n, y\rangle + \frac{\alpha_n}2\|Ax_n-y\|_2^2\right], \\
-             z_{n+1} = z_n + \alpha_n ( A x_n - y_n ).
+             z_{n+1} = z_n + \alpha_n ( A x_{n+1} - y_{n+1} ).
          \end{cases}
      \end{equation}
  
@@ -1830,7 +1830,7 @@
      Thus, \eqref{eq:prox-1} read
      \begin{equation}
          \begin{cases}
-             x_{n+1} =\arg\min_{x\in\bbR^d} \left[f(x)+\langle z_n,Ax\rangle \right] , \\
+             x_{n} =\arg\min_{x\in\bbR^d} \left[f(x)+\langle z_n,Ax\rangle \right] , \\
              z_{n+1}=P_{\alpha_n g}\left[ z_n + \alpha_n A x_n \right].
          \end{cases}
      \end{equation}
