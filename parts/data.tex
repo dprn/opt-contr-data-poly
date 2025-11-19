@@ -573,7 +573,7 @@ The proof reduces to show that it is possible to approximate the identity with a
 
 \prop[deep-identity]{}{
     Let $\sigma:\bbR\to \bbR$ be differentiable and non constant on an open set.
-    The, for any $L\in \bbN$ and $\varepsilon>0$, there exists a neural network $\phi\in \mcN_d^1(\sigma;L,d)$ such that 
+    The, for any $L\in \bbN$ and $\varepsilon>0$, there exists a neural network $\phi\in \mcN_d^d(\sigma;L,d)$ such that 
     \begin{equation}
         |\phi(x)-x|\le \varepsilon, \qquad  \forall x\in K.
     \end{equation}
@@ -586,7 +586,7 @@ The proof reduces to show that it is possible to approximate the identity with a
     \begin{equation}
         \phi_\lambda(x) := \frac{\lambda}{\varsigma} \sigma\left(\frac{x}{\lambda} + b \right) - \frac{\lambda}{\varsigma}\sigma(b).
     \end{equation}
-    It is clear that $\phi_\lambda\in \mcN_d^1(\sigma;1,d)$.
+    It is clear that $\phi_\lambda\in \mcN_d^d(\sigma;1,d)$.
     Moreover, a Taylor development easily shows that
     \begin{equation}
         \phi_\lambda(x)-x = \lambda \frac{\sigma(x/\lambda +b)-\sigma(b)}{\varsigma} - x \rightarrow 0, \qquad \text{as }\lambda\to +\infty.
