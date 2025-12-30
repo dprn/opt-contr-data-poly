@@ -107,7 +107,7 @@ See Figure~\ref{fig:losses}, right.
 \chapter{Feed-forward neural networks}
 
 
-In this chapter we introduce and discuss the simplest example of neural network\footnote{We mostly follow \cite{petersenMathematicalTheoryDeep2025}, to which we refer for further clarifications.}.
+In this chapter we introduce and discuss the simplest example of neural network\footnote{We mostly follow \cite{petersenMathematical2025}, to which we refer for further clarifications.}.
 These are obtained by concatenating the simplest possible nonlinear operations:
 \begin{equation}
     \phi_\theta(x) = \sigma(Wv + b), \qquad \text{where } \theta=(W,b) \in \bbR^{n\times m}\times \bbR^n.
@@ -154,7 +154,7 @@ In Figure~\ref{fig:one-hidden-layer} we present an example of a one-hidden layer
 
 The general expression for a feed-forward ANN can then be inferred, see Figure~\ref{fig:deepANN} for a graphical representation.
 
-\dfn[]{Feed-forward fully-connected ANN}{
+\dfn[feed-forward-ann]{Feed-forward fully-connected ANN}{
     Let $\sigma:\bbR\to \bbR$ be an activation function and let $d_1,\ldots, d_L\in \bbN$.
     An $N$-hidden layer feed-forward ANN $\phi\theta:\bbR^{d_0}\to \bbR^{d_{L+1}}$ is identified by the set of parameters
     \begin{equation}
@@ -167,6 +167,7 @@ The general expression for a feed-forward ANN can then be inferred, see Figure~\
     \end{equation}
     where 
     \begin{gather}
+        \label{eq:layer-ann}
         \phi^{\ell}: x^{(\ell-1)} \in \bbR^{d_{\ell-1}}\mapsto x^{(\ell)}:=\sigma(W_\ell x^{(\ell-1)}+b_\ell)\in \bbR^{d_\ell}, \qquad \forall \ell\in \llbracket 1,L\rrbracket\\
         \phi^{L+1}: x^{(L)} \in \bbR^{d_{L}}\mapsto x^{(L+1)}:=W_L x^{(L)}\in \bbR^{d_{L+1}}.
     \end{gather}
@@ -191,12 +192,12 @@ The general expression for a feed-forward ANN can then be inferred, see Figure~\
         \input{images/ann.tex}
     \end{adjustbox}
 \caption{\label{fig:deepANN}Graphical illustration of a fully-connected feedforward ANN consisting of
-$N+2\in\bbN$ affine transformations (i.e., consisting of $N+1$ layers: one input layer, $N$ hidden layers, and one output layer). Image from \cite{jentzenMathematicalIntroductionDeep2023}.}
+$N+2\in\bbN$ affine transformations (i.e., consisting of $N+1$ layers: one input layer, $N$ hidden layers, and one output layer). Image from \cite{jentzenMathematical2023}.}
 % with $l_-1\in\bbN$ neurons on the input layer (i.e., with $l_0$-dimensional input layer), with
 % $l_0\in\bbN$ neurons on the \first hidden layer (i.e., with $l_1$-dimensional \first hidden layer),
 % with $l_1\in\bbN$ neurons on the \second hidden layer (i.e., with $l_2$-dimensional \second hidden layer),
 % $\dots$, with $l_{L-2}$ neurons on the \nth{$(L-1)$} hidden layer (i.e., with $(l_{L-1})$-dimensional \nth{$(L-1)$} hidden layer),
-% and with $l_L$ neurons in the output layer (i.e., with $l_L$-dimensional output layer). Image from \cite{jentzenMathematicalIntroductionDeep2023}.}
+% and with $l_L$ neurons in the output layer (i.e., with $l_L$-dimensional output layer). Image from \cite{jentzenMathematical2023}.}
 \end{figure}
 
 \textbf{Remark: }
@@ -307,6 +308,35 @@ We start by proving the following.
     , \qquad \ell\in \llbracket 2,L+1\rrbracket. 
    \end{eqnarray}
 \end{proof}
+
+\subsection{Issues with learning}
+\label{sec:issues-learning}
+
+We conclude this section by discussing two issues that might arise when training deep neural networks using backpropagation.
+These are the \emph{vanishing gradient problem} and the \emph{dead neuron problem}.
+
+\paragraph{Vanishing gradient problem}
+The vanishing gradient problem arises when the gradients $\alpha^{(\ell)}$ defined in \eqref{eq:backprop} become very small as they are backpropagated through the layers of the network.
+This can happen when the activation function $\sigma$ has a derivative $\sigma'$ that is small in magnitude for a large portion of its domain (e.g., the \emph{sigmoid function}).
+As a result, the product of these small derivatives can lead to gradients that are effectively zero, making it difficult for the optimization algorithm to update the weights in the earlier layers of the network.
+This can slow down or even halt the learning process, as the network struggles to adjust its parameters based on the loss function.
+
+More precisely, if we assume that there exists $c\in (0,1)$ such that $|\sigma'(x)|\le c$ for all $x\in \bbR$, then from \eqref{eq:backprop} we have
+\begin{equation}
+    \|\alpha^{(\ell)}\| \le c^{L+1-\ell} \|W_{\ell+1}\| \cdots \|W_{L+1}\| \|\alpha^{(L+1)}\|.
+\end{equation}
+Thus, if $L$ is large and $c<1$, then $\alpha^{(\ell)}$ can become very small, leading to the vanishing gradient problem: the gradients used to update the weights in the earlier layers of the network become so small that they effectively stop learning.
+
+\paragraph{Dead neuron problem}
+The dead neuron problem occurs when certain neurons in the network become inactive and stop contributing to the learning process.
+This can happen when the activation function $\sigma$ outputs zero for a wide range of inputs, causing the gradients to be zero during backpropagation.
+As a result, the weights associated with these neurons do not get updated, leading to a situation where the neuron is effectively "dead" and does not participate in the network's computations.
+This issue is particularly common with activation functions like the \emph{ReLU (Rectified Linear Unit)}, which outputs zero for all negative inputs.
+If a neuron consistently receives inputs that lead to zero outputs, it may never recover and continue to contribute to the network's learning.  
+
+More precisely, if there exists $a\in \bbR$ such that $\sigma'(x)=0$ for all $x\le a$, then any neuron receiving inputs that are always less than or equal to $a$ will have zero gradients during backpropagation.
+Consequently, the weights associated with this neuron will not be updated, leading to a dead neuron that does not contribute to the network's output or learning process.
+
     
 \section{Universal approximation theorem}
 
@@ -346,7 +376,7 @@ In this section, we establish the following result, which stresses why the nonli
     This theorem can be extended to different functional spaces and different norms.
 \end{remark}
 
-The difficult part of this theorem (which holds for more general functions \cite{leshnoMultilayerFeedforwardNetworks1993}) is to establish the universal approximation property for non-polynomial activation fucntions. The reverse implication is left as an exercice.
+The difficult part of this theorem (which holds for more general functions \cite{leshnoMultilayer1993}) is to establish the universal approximation property for non-polynomial activation fucntions. The reverse implication is left as an exercice.
 
 The result follows from the following three facts:
 \begin{enumerate}
@@ -474,7 +504,7 @@ To conclude the proof, we need to recall the following concept.
 
 \begin{proof}
     The fact that $\sigma\star\varphi\in C^\infty_c(\bbR)$ is standard, and follows observing that $(\sigma\star \varphi)'=\sigma\star (\varphi')$.
-    For the proof of the last part of the statement, we refer to \cite[Lemma~3.15]{petersenMathematicalTheoryDeep2025}.
+    For the proof of the last part of the statement, we refer to \cite[Lemma~3.15]{petersenMathematical2025}.
 
     Let us build an explicit sequence $f_n\in \mcN_1^1(\sigma;1)$ such that $f_n\rightarrow \sigma\star\varphi$ uniformly on compact sets. 
     Let $a>0$ be such that $\operatorname{supp}\varphi\subset[-a,a]$.  
@@ -543,7 +573,7 @@ The proof reduces to show that it is possible to approximate the identity with a
 
 \prop[deep-identity]{}{
     Let $\sigma:\bbR\to \bbR$ be differentiable and non constant on an open set.
-    The, for any $L\in \bbN$ and $\varepsilon>0$, there exists a neural network $\phi\in \mcN_d^1(\sigma;L,d)$ such that 
+    The, for any $L\in \bbN$ and $\varepsilon>0$, there exists a neural network $\phi\in \mcN_d^d(\sigma;L,d)$ such that 
     \begin{equation}
         |\phi(x)-x|\le \varepsilon, \qquad  \forall x\in K.
     \end{equation}
@@ -556,7 +586,7 @@ The proof reduces to show that it is possible to approximate the identity with a
     \begin{equation}
         \phi_\lambda(x) := \frac{\lambda}{\varsigma} \sigma\left(\frac{x}{\lambda} + b \right) - \frac{\lambda}{\varsigma}\sigma(b).
     \end{equation}
-    It is clear that $\phi_\lambda\in \mcN_d^1(\sigma;1,d)$.
+    It is clear that $\phi_\lambda\in \mcN_d^d(\sigma;1,d)$.
     Moreover, a Taylor development easily shows that
     \begin{equation}
         \phi_\lambda(x)-x = \lambda \frac{\sigma(x/\lambda +b)-\sigma(b)}{\varsigma} - x \rightarrow 0, \qquad \text{as }\lambda\to +\infty.
@@ -576,7 +606,7 @@ The proof reduces to show that it is possible to approximate the identity with a
 \subsection{Further results}
 
 We conclude this chapter by mentioning the following remarkable result stating that, for an appropriate activation function, it is possible to approximate every function $f\in C(K)$, where $K\subset \bbR^d$, at every accuracy $\varepsilon>0$ with a neural network of size $O(d^2)$. Remarkably, this size is independent of $f$, of $K$, and even of $\varepsilon$.
-We refer to \cite[Section~3.2]{petersenMathematicalTheoryDeep2025} for a proof, based on the Kolmogorov's superposition theorem.
+We refer to \cite[Section~3.2]{petersenMathematical2025} for a proof, based on the Kolmogorov's superposition theorem.
 
 \thm[]{Universal approximation via superexpressive activations}{
     There exists a continuous activation function $\sigma:\bbR\to \bbR$ such that for every compact $K\subset\bbR^d$, every $\varepsilon>0$, and every $f\in C(K)$, there exists\footnote{That is, $\operatorname{width}\phi = 2d^2+2$ and $\operatorname{depth}\phi=2$} $\phi\in \mcN_d^1(\sigma; 2,2d^2+d)$ such that
@@ -587,3 +617,267 @@ We refer to \cite[Section~3.2]{petersenMathematicalTheoryDeep2025} for a proof, 
 
 \chapter{Residual neural networks, neural ODEs and control}
 \label{chp:resnets}
+
+In Section~\ref{sec:issues-learning} we discussed some issues that might arise when training deep neural networks using backpropagation.
+To overcome these issues, a popular approach consists in considering \emph{residual neural networks} (ResNets) \cite{heDeep2016}.
+These are defined as follows. 
+
+\dfn[resnet]{Residual neural network}{
+    Let $\sigma:\bbR\to \bbR$ be an activation function and let $d\in \bbN$.
+    An $N$-hidden layer ResNet $\Phi_\theta:\bbR^{d}\to \bbR^{d}$ is identified by the set of parameters
+    \begin{equation}
+        \Theta = \left\{ (W^{(1)}_{\ell}, b^{(1)}_{\ell},W^{(2)}_{\ell}, b^{(2)}_{\ell})_{\ell=1}^{L+1} \mid W_{\ell}^{(i)}\in\bbR^{d\times d}, \, b_\ell^{(i)}\in \bbR^{d}, i =1,2\right\}.
+    \end{equation}
+    The corresponding function is then
+    \begin{equation}
+        \label{eq:ANN}
+        \Phi_\theta(x) = \Phi^{L+1} \circ \Phi^L \circ\cdots\Phi^1(x),
+    \end{equation}
+    where, each layer $\Phi^\ell:\bbR^{d}\to \bbR^{d}$ is given by
+    \begin{equation}
+        \Phi^{\ell}(x) : x^{(\ell-1)} \in \bbR^{d} \mapsto x^{(\ell-1)} + \phi^\ell(x^{(\ell-1)}) \in \bbR^{d},   \qquad \ell\in \llbracket1,L\rrbracket,
+    \end{equation} 
+    for some standard $2$-layer feed-forward ANN $\phi^\ell:\bbR^{d}\to \bbR^{d}$ defined by   
+    \begin{equation}
+        \phi^\ell(x) = W_\ell^{(2)} \sigma(W_\ell^{(1)}x+b_\ell^{(1)}) + b_\ell^{(2)}.
+    \end{equation}
+}
+
+The advantage of ResNets is that the skip connections (i.e., the addition of the input $x^{(\ell-1)}$ to the output of the layer $\phi^\ell$) help in mitigating issues like vanishing gradients during training evoked in Section~\ref{sec:issues-learning}. Indeed, adapting the backpropagation algorithm to ResNets, one can see that the gradients $\alpha^{(\ell)}$ defined in \eqref{eq:backprop} satisfy
+\begin{equation}
+    \alpha^{(\ell)} = \alpha^{(\ell+1)} + \left[\frac{\partial \phi^{\ell+1}}{\partial x^{(\ell)}}\right]^\top \alpha^{(\ell+1)}, \qquad \ell\in \llbracket1,L\rrbracket,
+\end{equation}
+which prevents them from vanishing too quickly.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.5\textwidth]{images/resnet.png}
+    \caption{Schematic representation of a residual neural network layer. The input $x^{(\ell-1)}$ is transformed by a function $\mcF_\ell$ and then added to the original input to produce the output $x^{(\ell)}$.  Image from \cite{heDeep2016}}
+\end{figure}
+
+\section{Control formalism via neural ODEs}
+
+The key observation in \cite{chenNeural2018,haberStable2018} is that ResNets can be interpreted as a forward Euler discretization of an ordinary differential equation (ODE). 
+In particular, letting $u=(W^{(1)},b^{(1)},W^{(2)},b^{(2)})$ denote 
+\begin{equation}
+    F(x,u) :=  W^{(2)} \sigma(W^{(1)} x + b^{(1)}) + b^{(2)}.
+\end{equation}
+Then, fixing $\eta=1$, the ResNet defined by the parameters $\theta = \{(W_\ell^{(1)},b_\ell^{(1)},W_\ell^{(2)}, b_\ell^{(2)})\}_{\ell=1}^{L+1}$ can be rewritten as
+\begin{equation}
+    x^{(\ell)} = x^{(\ell-1)} + \eta F(x^{(\ell-1)},u_\ell), \qquad \ell\in \llbracket1,L\rrbracket,
+\end{equation}
+where $u_\ell = (W_\ell^{(1)},b_\ell^{(1)},W_\ell^{(2)},b_\ell^{(2)})$.
+Rearranging the terms, we have
+\begin{equation}
+    \frac{x^{(\ell)} - x^{(\ell-1)}}{\eta} = F(x^{(\ell-1)},u_\ell), \qquad \ell\in \llbracket1,L\rrbracket.
+\end{equation}
+Thus, the ResNet can be seen as the Euler discretization of the ODE
+\begin{equation}
+    \dot x(t)= F(x(t),u(t)), \qquad t\in [0,L],
+\end{equation}
+with initial condition $x(0)=x\in \bbR^{d_0}$ and control $u$ defined as $u(t) = u_\ell$ for $t\in [(\ell-1)\eta, \ell \eta)$.
+Rescaling the time variable as $t\mapsto t/L$ and letting $L\to +\infty$ we then obtain the continuous-time limit
+\begin{equation}
+    \dot x(t) = F(x(t),u(t)), \qquad t\in [0,1].
+\end{equation}
+
+This observation allows to interpret ResNets as \emph{neural ODEs}, i.e., ODEs whose dynamics is parametrized by a neural network.
+More precisely, we have the following.
+
+\dfn[neural-ODE]{Neural ODEs control systems}{
+    Let $\sigma:\bbR\to \bbR$ be an activation function, and let $F:\bbR^{d}\times U\to \bbR^{d}$ be defined as\footnote{Here, one could of course consider different and more general architectures for $F$.}
+    \begin{equation}
+        F(x,u) = W^{(2)} \sigma(W^{(1)} x + b^{(1)}) + b^{(2)},
+    \end{equation}
+    for $u=(W^{(1)},b^{(1)},W^{(2)},b^{(2)})\in U$, where $U$ is a suitable subset of $\bbR^{d_1\times d}\times \bbR^{d_1}\times \bbR^{d\times d_1}\times \bbR^{d}$.
+    
+    A \emph{neural ODE} is the controlled ODE
+    \begin{equation}
+        \dot x(t) = F(x(t),u(t)), \qquad t\in [0,1],
+    \end{equation}
+    with initial condition $x(0)=x\in \bbR^{d}$ and control $u\in L^\infty([0,1];U)$.
+
+    The \emph{flow} associated to the neural ODE is the map $\Phi_u:\bbR^d\to \bbR^d$ defined as
+    \begin{equation}
+        \Phi_u(x) := x_u(1),
+    \end{equation}
+    where $x_u$ is the solution of the neural ODE with control $u$ and initial condition $x$.
+}
+
+We summarize the previous observation in the following result.
+
+\thm[neural-ODE]{Neural ODEs}{
+    Then, for any control $u\in L^\infty([0,1];U)$ and $\varepsilon>0$ there exists a sufficiently small $\eta>0$ such that the solution $x_u$ of the neural ODE satisfies
+    \begin{equation}
+         |x_u(\ell/L) - x^{(\ell)}| \le \varepsilon,
+         \qquad 
+         \forall \ell\in \llbracket1,L\rrbracket,
+    \end{equation}
+    where $x^{(\ell)}$ are the layers outputs of the ResNet defined by
+    \begin{equation}
+        x^{(\ell)}
+        = x^{(\ell-1)} + \frac1L F(x^{(\ell-1)},u(\ell-1)), \qquad \ell\in \llbracket1,L\rrbracket.
+    \end{equation}
+    }
+The above result says that a ResNet with $L\gg1$ layers can be seen as the approximation of the flow of a neural ODE, that is, 
+\begin{equation}
+    \Phi_u \approx \Phi^{L} \circ \Phi^{L-1} \circ \cdots \circ \Phi^1.
+\end{equation}
+
+The advantage of the neural ODE formalism is that it allows to leverage the rich theory of optimal control to study and train deep neural networks.
+In particular, we have that 
+\begin{itemize}
+    \item the \emph{expressivity} of the ResNet can be studied via controllability properties of the corresponding neural ODE,
+    \item the \emph{training} of a ResNet with $L$ layers can be seen as the optimal control problem for the corresponding neural ODE with piecewise constant controls with $L$ pieces.
+    % \item the \emph{backpropagation} algorithm can be interpreted as the Pontryagin's Maximum Principle. 
+\end{itemize}
+
+Since the control system given by the neural ODE is non-linear, we cannot apply directly the results of Part~\ref{part:control}.
+The results in the following sections discuss recent advances in this direction and are based on geometric control theory; we refer to \cite{agrachevControl2022,tabuadaUniversal2023} for more details.
+
+\subsection{Training via optimal control}
+
+Let us consider the training problem detailed in Definition~\ref{def:data-fitting-pb}, for a set of data $\mfX=\{(x_i,y_i)\}_{i=1}^N\subset \bbR^d\times \bbR^d$.
+Using the neural ODE formalism, the training of a ResNet with $L$ layers is related to the following optimal control problem 
+\begin{equation}
+    \label{eq:neural-ODE-training}
+    \text{Find } u^\star\in L^\infty([0,1];U) \text{ such that }
+    u^\star = \arg\min_{u\in L^\infty([0,1];U)} \frac1N \sum_{i=1}^N \ell(\Phi_u(x_i),y_i),
+\end{equation}
+where $\Phi_u$ is the flow of the neural ODE defined in Definition~\ref{def:neural-ODE}.
+
+Under mild assumptions on $\mcL$ (namely that $\mcL(x,x)=0$ for any $x\in \bbR^d$), we have that the solution to the above is obtained at zero cost if the following controllability property holds.
+
+\dfn[]{Simultaneous controllability}{
+    The neural ODE defined in Definition~\ref{def:neural-ODE} is said to be \emph{simultaneously controllable} on a set $\Omega\subset \bbR^d$ if for any $N\in \bbN$, any set of points $\{x_1,\ldots,x_N\}\subset \Omega$ and any set of target points $\{y_1,\ldots,y_N\}\subset \Omega$, there exists a control $u\in L^\infty([0,1];U)$ such that the corresponding flow $\Phi_u$ satisfies
+    \begin{equation}
+        \Phi_u(x_i) = y_i, \qquad \forall i\in \llbracket1,N\rrbracket.
+    \end{equation}
+}
+
+Observe that this definition requires to be able to steer \emph{simultaneously} all points $x_i$ to the corresponding points $y_i$ using the same control $u$, and is thus stronger than the standard notion of controllability of Definition~\ref{def:controllability}.
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[>=latex, thick, 
+    x={(0.8cm,-0.3cm)}, y={(0cm,1cm)}, z={(0.2cm,0.6cm)}]
+        \input{images/ensemble-control.tex}
+    \end{tikzpicture}
+    \caption{Schematic representation of simultaneous controllability. The same control $u$ is used to steer all points $x_i$ to the corresponding points $y_i$.}
+\end{figure}
+
+A result in this direction has been recently obtained in \cite{tabuadaUniversal2023}, where the authors prove simultaneous controllability for neural ODEs with specific activation functions.
+
+\thm[simultaneous-control]{Simultaneous controllability for generic inputs}{
+    Assume that the activation function $\sigma:\bbR\to \bbR$ is such that 
+    \begin{itemize}
+        \item $\sigma$ is Lipschitz continuous and such that  $\sigma'(s)\ge 0$;
+        \item there exists $j\in\bbN_0$, $a_1,a_2,a_3\in \bbR$, $a_2\neq 0$, such that $\eta(s):=\sigma^{(j)}(s)$ is injective and such that
+        \begin{equation}
+            \eta'(s) = a_1 + a_2 \eta(s) + a_3 \eta(s)^2, \qquad \forall s\in \bbR.
+        \end{equation}
+    \end{itemize}
+    Then, the neural ODE defined in Definition~\ref{def:neural-ODE} is simultaneously controllable on the set 
+    \begin{equation}
+        \Omega = \{ x\in \bbR^d \mid x_i \neq x_j, \, \forall i\neq j\}.
+    \end{equation}
+}
+
+The assumptions on the activation function are satisfied, for example, by the sigmoid function $\sigma(s) = 1/(1+e^{-s})$ and by the hyperbolic tangent $\sigma(s) = \tanh(s)$.
+
+This approach has two problems, however:
+\begin{itemize}
+    \item The controllability result does not really provide a constructive (or easily implementable) way to compute the control $u$ steering the points $x_i$ to the points $y_i$;
+    \item Striving for exactly zero training error might lead to overfitting issues, which is known to lead to poor generalization properties on unseen data.
+\end{itemize}
+
+To this end, an alternative approach studied in \cite{scagliottiEnsembles2022} consists in considering a relaxed version of the simultaneous controllability problem, where one looks for a control $u$ minimizing the cost functional
+\begin{equation}
+    J(u) = \frac1N \sum_{i=1}^N \| \Phi_u(x_i) - y_i|^2 + \frac{\beta}2  \|u(t)\|_2^2.
+\end{equation}
+
+
+\subsection{Expressivity via controllability}
+
+% In this section we discuss recent results relating the expressivity of ResNets to controllability properties of the corresponding neural ODE. We refer to \cite{agrachevControl2022,tabuadaUniversal2023} for more details.
+
+% \dfn[]{Flow of a neural ODE}{
+%     Let $F:\bbR^d\times U\to \bbR^d$ be as in Definition~\ref{def:neural-ODE}, and let $u\in L^\infty([0,1];U)$.
+%     The \emph{flow} associated to the neural ODE is the map $\Phi_u:\bbR^d\to \bbR^d$ defined as
+%     \begin{equation}
+%         \Phi_u(x) := x_u(1),
+%     \end{equation}
+%     where $x_u$ is the solution of the neural ODE with control $u$ and initial condition $x$.
+% }
+
+Observe, that $u\mapsto \Phi_u$ defines a family of diffeomorphisms of $\bbR^d$ parametrized by the controls $u$.
+Since by Theorem~\ref{th:neural-ODE} ResNets approximate the flow of neural ODEs, it is natural to study the expressivity of ResNets via the properties of the family of diffeomorphisms $\{\Phi_u \mid u\in L^\infty([0,1];U)\}$.
+More precisely, we have the following immediate consequence of Theorem~\ref{th:neural-ODE}.
+
+\prop[]{}{
+    Let $\resnet^d(\sigma;m)$ denote the set of all ResNets with activation function $\sigma:\bbR\to \bbR$, input/output dimension $d$, and width at most $m$.
+    Then, the closure of $\resnet^d(\sigma;d)$ w.r.t.~uniform convergence on compact sets contains the set
+    \begin{equation}
+        \{\Phi_u \mid u\in L^\infty([0,1];U)\}.
+    \end{equation}
+    In particular, if for any compact $K\subset \bbR^d$ the family $\{\Phi_u \mid u\in L^\infty([0,1];U)\}$ is dense in $C^0(K,\bbR^d)$, then $\resnet^d(\sigma;d)$ is a universal approximator of $C^0(\bbR^d,\bbR^d)$.
+}
+
+Observe that the density of the family $\{\Phi_u \mid u\in L^\infty([0,1];U)\}$ in $C^0(K,\bbR^d)$ is a much stronger assumption that the notion of controllability defined in Definition~\ref{def:controllability} and the one of simultaneous controllability defined above. 
+Indeed, here we need to be able to find a single control that steers any point $x\in K$ to any target point $y:=f(x)$, for a given continuous function $f:K\to \bbR^d$.
+ 
+% Moreover, for topological reasons, it is not possible to approximate arbitrary continuous functions with diffeomorphisms obtained as flows of ODEs.
+% Indeed, we have the following.
+
+% \prop[]{}{
+%     For any control $u$, the corresponding flow $\Phi_u$ is homotopic to the identity.
+%     That is, there exists continuous map $h:[0,1]\times \bbR^d\to \bbR^d$ such that
+%     \begin{equation}
+%         \label{eq:homotopy}
+%         h(0,x) = x, \qquad h(1,x) = \Phi_u(x), \qquad \forall x\in \bbR^d.
+%     \end{equation}
+% }
+
+% \begin{proof}
+%     The homotopy is given explicitly by
+%     \begin{equation}
+%         h(t,x) = x_u(t),
+%     \end{equation}
+%     where $x_u$ is the solution of the neural ODE with control $u$ and initial condition $x$.
+% \end{proof}
+
+% As a consequence of the above, the most we can expect is to approximate continuous functions $f:K\to \bbR^d$ that are homotopic to the identity.
+The result we present below requires the following assumption on $f$.
+
+\dfn[]{Monotone analytic homotopy}{
+    A function $f:\bbR^d\to \bbR^d$ is monotone homotopic to the identity if there exists an analytic homotopy\footnote{That is, $h$ is analytic and such that $h(0,x)=x$ and $h(1,x)=f(x)$.} $h:[0,1]\times \bbR^d\to \bbR^d$  such that, for any $t\in [0,1]$, the map $h(t,\cdot)$ is monotone, i.e.,
+    \begin{equation}
+        x_i \le y_i \qquad \forall i\in \llbracket1,d\rrbracket \implies h(t,x)_i \le h(t,y)_i \qquad \forall i\in \llbracket1,d\rrbracket.
+    \end{equation} 
+}
+
+We then have the following result in \cite{tabuadaUniversal2023}.
+
+\thm[]{Universal approximation of functions homotopic to the identity}{
+    Assume that $\sigma$ satisfies the assumptions of Theorem~\ref{th:simultaneous-control}.
+    Then, for any compact set $K\subset \bbR^d$ and any continuous function $f:K\to \bbR^d$ that is monotone analytic homotopic to the identity, for any $\varepsilon>0$ there exists a control $u\in L^\infty([0,1];U)$ such that the corresponding flow $\Phi_u$ satisfies
+    \begin{equation}
+        \| f - \Phi_u\|_K \le \varepsilon.
+    \end{equation}
+
+    In particular, $\resnet^d(\sigma;d)$ is a universal approximator of the set of functions that are monotone analytic homotopic to the identity on compact sets.
+}
+
+The above theorem can be extended to general continuous functions assuming that the initial and final layers have different dimensions, i.e., $d_0, d_{L+1}\neq d$.
+
+\thm[]{}{
+    Assume that $\sigma$ satisfies the assumptions of Theorem~\ref{th:simultaneous-control} and let $d'$ be such that $d=2d'+1$.
+    Then, for any compact set $K\subset \bbR^d$ and any continuous function $f:K\to \bbR^{d'}$, for any $\varepsilon>0$ there exists a control $u\in L^\infty([0,1];U)$, an injection $\alpha:\bbR^{d'}\to \bbR^{2d'+1}$, and a projection $\beta:\bbR^{2d'+1}\to \bbR^{d'}$, such that 
+    \begin{equation}
+        \| f - \beta\circ \Phi_u\circ\alpha\|_K \le \varepsilon.
+    \end{equation}
+
+    In particular, letting $\resnet^{d'}(\sigma;2d'+1)$ denote the set of all ResNets with activation function $\sigma:\bbR\to \bbR$, input/output dimension $d'$, and width at most $2d'+1$, we have that $\resnet^{d'}(\sigma;2d'+1)$ is a universal approximator of $C^0(\bbR^{d'},\bbR^{d'})$.
+}
+
+
