@@ -15,12 +15,12 @@ For this chapter we follow \cite{trelatControl2024}.
     \begin{itemize}
         \item The \emph{state} is a the function $x: \bbR \to \bbR^n$;
         \item $f:\bbR\times \bbR^n \times \bbR^m \to \bbR^n$ is  of class $C^1$ w.r.t.~$(x,u)\in \bbR^n\times \bbR^m$, and locally integrable w.r.t.~$t\in \bbR$;
-        \item The \emph{control} $u:\bbR \times U$ is a measurable and essentially bounded function of time, taking values in $U\subset \bbR^m$.
+        \item The \emph{control} $u:\bbR \to U$ is a measurable and essentially bounded function of time, taking values in $U\subset \bbR^m$.
     \end{itemize}
 
     The control system is 
     \begin{itemize}
-        \item \emph{Linear} is $f(t,x,u) = A(t)x + B(t)u+r(t)$ for $A:\bbR\to \bbR^{n\times n}$, $B:\bbR\to \bbR^{n\times m}$, $r:\bbR\to \bbR^n$. In this case, we assume these functions to be of class $L^\infty$ on every compact interval.
+        \item \emph{Linear} if $f(t,x,u) = A(t)x + B(t)u+r(t)$ for $A:\bbR\to \bbR^{n\times n}$, $B:\bbR\to \bbR^{n\times m}$, $r:\bbR\to \bbR^n$. In this case, we assume these functions to be of class $L^\infty$ on every compact interval.
         \item \emph{Autonomous} if $f(t,x,u)=f(x,u)$ is independent of time. Otherwise, the system is \emph{instationary} or \emph{time-varying}.
     \end{itemize}
 }
@@ -42,7 +42,7 @@ Once a control $u$ and an initial condition $x_0\in\bbR^n$ are fixed, the existe
         \item $f(\cdot,x)$ is measurable for any $x\in \bbR^n$;
         \item there exists $r,M>0$ such that $\|f(t,x)\|_2\le M$ for any $(t,x)\in (-r,r) \times B(0,r)$.
     \end{itemize}
-    Then, there exists a unique solution to \eqref{eq:cauchy-prob}, maximally defined on some open interval $I\subset\bbR$ such that $0\in \bbR$.
+    Then, there exists a unique solution to \eqref{eq:cauchy-prob}, maximally defined on some open interval $I\subset\bbR$ such that $0\in I$.
 }
 
 When considering the control system on an interval $[0,T]$, we need its solutions to not blow up before the time $T$. 
@@ -336,7 +336,7 @@ The following result goes in that direction, and can be seen as an extension of 
 \prop[]{}{
     Consider a linear system \eqref{eq:cs-linear} whose Kalman matrix $K$ satisfies $\rank K = r$. Then, letting $y=(y_1,y_2)^\top\in \bbR^{r\times (n-r)}$, the system is similar to 
     \begin{eqnarray}
-        \dot y_1 &=& A_1' y_1 + B_1 u + A_3' y_2 \\
+        \dot y_1 &=& A_1' y_1 + B_1' u + A_3' y_2 \\
         \dot y_2 &=& A'_2 y_2.
     \end{eqnarray}
     In particular, this splits the original system in a controllable part (the variable $y_1$) and an uncontrollable one (the variable $y_2$).
@@ -442,9 +442,9 @@ More precisely, we have the following.
     \[
         \dot{\tilde x} = A_c \tilde x + B_c \tilde u,
         \qquad\text{with}\qquad
-        A_c = T^{-1} A T,
+        A_c = P^{-1} A P,
         \qquad
-        B_c = T^{-1} B R.
+        B_c = P^{-1} B R.
     \]
     Here $(A_c,B_c)$ has the block-diagonal \emph{Brunovský form}
     \[
