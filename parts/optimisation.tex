@@ -192,11 +192,11 @@
                \end{equation}
          \item $F$ is strictly convex if
                \begin{equation}
-                   F(tx + (1-t)y) < t F(x) + (1-t)F(y) \qquad \forall x,y\in \bbR^d,\, x\neq y, \, t\in [0,1].
+                   F(tx + (1-t)y) < t F(x) + (1-t)F(y) \qquad \forall x,y\in \bbR^d,\, x\neq y, \, t\in ]0,1[.
                \end{equation}
          \item $F$ is strongly convex if there exists $\gamma>0$ such that
                \begin{equation}
-                   F(tx + (1-t)y) \le t F(x) + (1-t)F(y) - \frac{\gamma}{2}t(t-1)\|x-y\|_2^2 \qquad \forall x,y\in \bbR^d,\, t\in [0,1].
+                   F(tx + (1-t)y) \le t F(x) + (1-t)F(y) - \frac{\gamma}{2}t(t-1)\|x-y\|_2^2 \qquad \forall x,y\in \bbR^d,\, t\in ]0,1[.
                \end{equation}
      \end{itemize}
  
@@ -205,7 +205,7 @@
  
  Observe that it holds
  \begin{equation}
-     \text{convex} \impliedby \text{strongly convex} \impliedby \text{strictly convex}
+     \text{convex} \impliedby \text{strictly convex} \impliedby \text{strongly convex}
  \end{equation}
  
  We say that a standard function $F:K\to \bbR$ is convex, strictly convex, strongly convex, or concave, if the same is true for its extension $\bar F$. Observe that this requires $K$ to be convex.
@@ -729,7 +729,7 @@
                \end{equation}
                In particular, $\feas$ is convex if \eqref{eq:op} is convex.
          \item Problem \eqref{eq:op} is \emph{feasible} if it admits at least a feasible point (i.e., $\feas\neq \varnothing$).
-         \item The \emph{optimal value} is $p^\star = \min_{x\in\feas} F(x_0)$.
+         \item The \emph{optimal value} is $p^\star = \min_{x\in\feas} F_0(x)$.
          \item A \emph{minimizer} is a feasible point $x^\star$ such that $F_0(x^\star)\le F_0(x)$ for all feasible $x\in \feas$. That is, $F_0(x^\star)=p^\star$.
      \end{itemize}
  }
@@ -742,11 +742,11 @@
  
  Let us introduce the notation
  \begin{equation}
-     \bbR^M=\{\nu\in \bbR^M\mid \nu_j\ge 0\quad \forall j\in \llbracket 1,M\rrbracket\}.
+     \bbR^M_+=\{\nu\in \bbR^M\mid \nu_j\ge 0\quad \forall j\in \llbracket 1,M\rrbracket\}.
  \end{equation}
  
  \dfn{Lagrange and Lagrange dual functions}{
-     The \emph{Lagrange function} of the optimization problem \eqref{eq:op} is the function $F:\bbR^d \times \bbR^m \times \bbR^M_+\to \bbR\cup\{+\infty\}$ defined by
+     The \emph{Lagrange function} of the optimization problem \eqref{eq:op} is the function $L:\bbR^d \times \bbR^m \times \bbR^M_+\to \bbR\cup\{+\infty\}$ defined by
      \begin{equation}
          L(x,\xi,\nu) = F_0(x) + \langle \xi, Ax-y\rangle +\sum_{j=1}^m \nu_j F_j(x).
      \end{equation}
@@ -940,7 +940,7 @@
      Also conic optimization problems have their duality theory.
  
      \dfn{Duality for conic optimization problems}{
-         The \emph{Lagrange function} of the optimization problem \eqref{eq:cop} is the function $F:\bbR^d \times \bbR^m \times \bbR^M_+\to \bbR\cup\{+\infty\}$ defined by
+         The \emph{Lagrange function} of the optimization problem \eqref{eq:cop} is the function $L:\bbR^d \times \bbR^m \times \bbR^M_+\to \bbR\cup\{+\infty\}$ defined by
          \begin{equation}
              L(x,\xi,\nu) = F_0(x) - \langle \xi,x\rangle +\sum_{j=1}^m \nu_j F_j(x).
          \end{equation}
@@ -1180,7 +1180,7 @@
          Recall that $\nabla f(x^\star)=0$, this implies that
          \begin{equation}
              \label{eq:estimate-grad}
-             \lim_{t\to +infty} \|\nabla f(x(t)) - \nabla f(x^\star)\|_2 \le \|\nabla f(x_0)\|_2 \lim_{t\to +\infty} e^{-\gamma t/2} = 0.
+             \lim_{t\to +\infty} \|\nabla f(x(t)) - \nabla f(x^\star)\|_2 \le \|\nabla f(x_0)\|_2 \lim_{t\to +\infty} e^{-\gamma t/2} = 0.
          \end{equation}
  
          Let us now use the above to show that $x(t)\rightarrow x^\star$ as $t\to +\infty$.
@@ -1216,7 +1216,7 @@
              \item If $x^\star$ is a minimizer for $f$,
                    \begin{equation}
                        \label{eq:previous}
-                       \frac{1}{2L}\|\nabla f(y)\|_2^2 \le f(y) - f(x^\star) \le \frac{1}{2}\|y-x^\star\|_2^2, \qquad \forall y\in \bbR^d.
+                       \frac{1}{2L}\|\nabla f(y)\|_2^2 \le f(y) - f(x^\star) \le \frac{L}{2}\|y-x^\star\|_2^2, \qquad \forall y\in \bbR^d.
                    \end{equation}
              \item Co-coercivity:
                    \begin{equation}
@@ -1381,7 +1381,7 @@
          f(x) = \bbE \left[f(x,\cdot)\right] = \int_\Omega f(x,\omega)\, d\bbP(\omega),
      \end{equation}
      where $f(x,\cdot):\Omega\to \bbR$ are all random variables over a probability space $(\Omega,\mcF, \bbP)$.
-     This probability space tipically represents the space of training data: each realization $f(\cdot,\omega)$ is a loss function on the specific sample $\omega\in \Omega$: it tells ``how bad'' picking the parameter $x\in\bbR^d$ for our model performs on this sample.
+     This probability space typically represents the space of training data: each realization $f(\cdot,\omega)$ is a loss function on the specific sample $\omega\in \Omega$: it tells ``how bad'' picking the parameter $x\in\bbR^d$ for our model performs on this sample.
      Since $\Omega$ can be extremely large,  the computation of
      \begin{equation}
          \label{eq:full-grad}
@@ -1410,7 +1410,7 @@
          Let $f$ be given as in \eqref{eq:loss}, with $f(\cdot,\omega)\in C^1(\bbR^d)$ for any $\omega\in \Omega$. The stochastic gradient descent algorithm starting at $x_0\in\bbR^d$ with parameters $(\alpha_n)_n\subset \bbR_+$ is
          \begin{equation}
              \label{eq:stoc-grad-desc}
-             x_{n+1} = x_n -\alpha_k \nabla_x f(x_n,\omega_n),
+             x_{n+1} = x_n -\alpha_n \nabla_x f(x_n,\omega_n),
          \end{equation}
          where $(\omega_n)_n\in \Omega$ is a sequence of indipendent and identically distributed random variables.
      }
@@ -1734,7 +1734,7 @@
      Here,  $A\in \bbR^{m\times d}$, while $f$ and $g$ are convex function, with $f$ typically smooth, and $g$ non-smooth.
  
      If $P_{g\circ A}$ is simple to compute, this problem can be solved by applying the proximal gradient method of the previous section.
-     However, we can encounter situations where, although $g$ has a simple proximal operatr, the proximal operator of ${g\circ A}$ is very hard to compute.
+     However, we can encounter situations where, although $g$ has a simple proximal operator, the proximal operator of ${g\circ A}$ is very hard to compute.
      In this section we see that, however, considering the dual problem allows to circumvent this issue.
  
      \ex{Signal denoising using total variation}{
@@ -1755,7 +1755,7 @@
                  x_2 - x_1 \\
                  x_3 - x_2 \\
                  \vdots    \\
-                 x_n - x_{d-1}
+                 x_d - x_{d-1}
              \end{bmatrix}.
          \]
      }
@@ -1799,7 +1799,7 @@
  
      We see that the dual problem concerns now the function $f^*\circ (-A^\top)$, which inherits the good properties of $f$, and $g^*$, whose proximal operator is easy to compute. Indeed, thanks to Moreau's identity (Theorem~\ref{th:moreau-ident}) we have
  \begin{equation}
-     P_{g^*}(y) = y - P_g(y), \qquad \forall y\ in \bbR^d.
+     P_{g^*}(y) = y - P_g(y), \qquad \forall y \in \bbR^d.
  \end{equation}
  We thus have the following.
  
