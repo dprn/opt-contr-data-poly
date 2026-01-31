@@ -1301,21 +1301,70 @@
              \label{eq:first-step1}
              f(x_{n+1})
              \le f(x_n) + \langle \nabla f(x_n), x_{n+1}-x_n \rangle+\frac{L}2\|x_{n+1}-x_n\|_2^2
-             = f(x_n)-\alpha_n \left(1-\frac{\alpha_n L}2\right) \|\nabla f(x_n)\|_2^2.
+             = f(x_n)-\alpha_n \left(1-\frac{\alpha_n L}2\right) \|\nabla f(x_n)\|_2^2
+             \le f(x_n) - \frac{\alpha_n}2 \|\nabla f(x_n)\|_2^2.
+         \end{equation}
+        Here, we used the assumption $\alpha_n\le 1/L$. The above then implies that $f(x_{n+1})<f(x_n)$ for any $n\in \bbN$. Hence, by coercivity, there exists $R>0$ such that $x_n\in \bar B(0,R)$ for any $n\in \bbN$.
+        In particular, the same argument used at the end of the proof of Theorem~\ref{th:conv-grad-flow} implies that to prove convergence of $(x_n)_n$ to the unique minimum it suffices to show that $\|\nabla f(x_n)\|_2 \rightarrow 0$ as $n \to +\infty$.
+        
+        Observe that by \eqref{eq:first-step1}, we have
+         \begin{equation}
+            \frac12 \sum_{n=0}^{N-1} \alpha_n \|\nabla f(x_n)\|_2^2 \le \sum_{n=0}^{N-1} \left(f(x_{n})-f(x_{n+1})\right) =f(x_0) - f(x_N) \le f(x_0)-f(x^\star).
+        \end{equation}
+        Letting $N\to +\infty$, we obtain
+        \begin{equation}
+            \label{eq:sum-grad-alpha}
+             \sum_{n=0}^{+\infty} \alpha_n \|\nabla f(x_n)\|_2^2 < +\infty.
          \end{equation}
  
-         The above implies that
+        We start by showing that \eqref{eq:sum-grad-alpha} implies that $\|\nabla f(x_n)\|_2 \rightarrow 0$ under the additional assumption that there exists $c>0$ such that $\alpha_n \ge c$ for all $n$. 
+         Indeed, in this case we have
          \begin{equation}
-             \sum_{n=0}^{N-1} \alpha_n \left(1-\frac{\alpha_n L}2\right) \|\nabla f(x_n)\|_2^2 \le \sum_{n=0}^{N-1} \left(f(x_{n})-f(x_{n+1})\right) =f(x_0) - f(x_N) \le f(x_0)-f(x^\star).
+             \sum_{n=0}^{N-1}  \|\nabla f(x_n)\|_2^2 <+\infty \implies \lim_{n\to +\infty} \|\nabla f(x_n)\|_2^2 \rightarrow0.
          \end{equation}
-         Since the r.h.s.~is independent of $N$ and $(1-L\alpha_n/2) \ge 1/2$, this shows that
-         \begin{equation}
-             \sum_{n=0}^{N-1} \alpha_n  \|\nabla f(x_n)\|_2^2 \le
-             \frac12\sum_{n=0}^{N-1} \alpha_n \left(1-\frac{\alpha_n L}2\right) \|\nabla f(x_n)\|_2^2 < +\infty.
-         \end{equation}
-         Since $\sum_n \alpha_n = +\infty$ by assumption, one easily shows by contradiction that $\|\nabla f(x_n)\|_2\rightarrow 0$ as $n\to +\infty$.
- 
-         Observe that, by \eqref{eq:first-step1} and the assumption $\alpha_n\le 1/L$, we deduce that $f(x_{n+1})<f(x_n)$ for any $n\in \bbN$. In particular, by coercivity, there exists $R>0$ such that $x_n\in \bar B(0,R)$ for any $n\in \bbN$, and thus the same argument used at the end of the proof of Theorem~\ref{th:conv-grad-flow} shows that $\|\nabla f(x_n)\|_2^2$ implies convergence to the unique minimum.
+
+        In the general case, proving that $\|\nabla f(x_n)\|_2^2\rightarrow 0$ requires additional care.
+        To this aim, assume by contradiction that there exists $\varepsilon>0$ and a subsequence $(x_{n_k})_k$ such that $\|\nabla f(x_{n_k})\|_2 \ge \varepsilon >0$ for any $k$.
+        Then, by \eqref{eq:first-step1} we have
+        \begin{equation}
+            f(x_{n_k}) - f(x_{n_k+1}) \ge \frac{\alpha_{n_k}}2 \|\nabla f(x_{n_k})\|_2^2 \ge \frac{\alpha_{n_k}\varepsilon}2.
+        \end{equation}
+% 
+        By uniform continuity of $\nabla f$ on the ball $\bar B(0,R)$, there exists $\delta>0$ such that
+        \begin{equation}
+            \|x-y\|_2 \le \delta
+            \implies
+            \|\nabla f(x)-\nabla f(y)\|_2 \le \frac{\varepsilon}2,
+            \qquad \forall x,y\in \bar B(0,R).
+        \end{equation}
+        Then, for any $n_k\in \bbN$, we define $m_k\ge n_k$ as the smallest integer such that
+        \begin{equation}
+            \label{eq:mk}
+            \|x_{n} - x_{n_k}\|_2 < \delta, \qquad \forall n \in \llbracket n_k, m_k\rrbracket.
+        \end{equation}
+
+        We need to show that such an integer is well-defined. Observe that $m_k=n_k$ satisfies the condition. We are left to show that $m_k<+\infty$, which is exactly where $\sum_n\alpha_n=+\infty$ is used. Observe that, by 
+        definition of $m_k$, for any $n\in \llbracket n_k, m_k \rrbracket$ we have
+        \begin{equation}
+            \|x_{n+1} - x_{n}\|_2 \le \delta,
+            \implies 
+            \|\nabla f(x_n)\|\ge \|\nabla f(x_n) - \nabla f(x_{n_k})\|_2 - \|\nabla f(x_{n_k})\|_2 \ge \frac{\varepsilon}2.
+        \end{equation}
+        Hence, if \eqref{eq:mk} is satisfied with $m_k=+\infty$, we would have that $x_n \in B(x_{n_k},\delta)$ for any $n\ge n_k$. 
+        Letting $c>0$ be such that $\|\nabla f(x)\|_2\le c$ for any $x\in B(x_{n_k},\delta)$, by definition of the algorithm this would imply
+        \begin{equation}
+            x_n-x_{n_k} =  \sum_{m=n_k}^{n-1} (x_{m+1}-x_m)  
+            = \sum_{m=n_k}^{n-1} \alpha_m \nabla f(x_m) \in B(0,\delta) \implies 
+            \sum_{m=n_k}^{n-1} \alpha_m \le \frac{\delta}{c}, \qquad \forall n\ge n_k.
+        \end{equation}
+        This contradicts the assumption that $\sum_n \alpha_n = +\infty$, and thus $m_k$ is well-defined and finite.
+
+        We now use the definition of $m_k$ to obtain a contradiction of \eqref{eq:sum-grad-alpha}.
+        Indeed, for any $k\in \bbN$ and $n\in \llbracket n_k, m_k \rrbracket$, we have
+        \begin{equation}
+            \sum_{m=n_k}^{m_k} \alpha_m \|\nabla f(x_m)\|_2^2 = \sum_{m=n_k}^{m_k} \|x_{m+1}-x_m\|_2 \ge \|x_{m_k+1}-x_{n_k}\|_2 \ge \delta.
+        \end{equation}
+        This contradicts \eqref{eq:sum-grad-alpha}, and thus concludes the proof.
      \end{proof}
  
      \begin{remark}
@@ -1622,8 +1671,8 @@
      }
  
      \begin{proof}
-         To be added. We refer to \cite{fawziLecture}, for the moment.
- 
+        %  To be added. We refer to \cite{fawziLecture}, for the moment.
+%  
          Let $n\in\bbN$, and denote $x^+=x_{n+1}$ and $x=x_n$.
          We will bound the two parts of the objective function separately.
          By definition of proximal operator, we have that for any $z$ it holds
