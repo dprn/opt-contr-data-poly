@@ -1324,47 +1324,18 @@
          \end{equation}
 
         In the general case, proving that $\|\nabla f(x_n)\|_2^2\rightarrow 0$ requires additional care.
-        To this aim, assume by contradiction that there exists $\varepsilon>0$ and a subsequence $(x_{n_k})_k$ such that $\|\nabla f(x_{n_k})\|_2 \ge \varepsilon >0$ for any $k$.
-        Then, by \eqref{eq:first-step1} we have
-        \begin{equation}
-            f(x_{n_k}) - f(x_{n_k+1}) \ge \frac{\alpha_{n_k}}2 \|\nabla f(x_{n_k})\|_2^2 \ge \frac{\alpha_{n_k}\varepsilon}2.
-        \end{equation}
-% 
-        By uniform continuity of $\nabla f$ on the ball $\bar B(0,R)$, there exists $\delta>0$ such that
-        \begin{equation}
-            \|x-y\|_2 \le \delta
-            \implies
-            \|\nabla f(x)-\nabla f(y)\|_2 \le \frac{\varepsilon}2,
-            \qquad \forall x,y\in \bar B(0,R).
-        \end{equation}
-        Then, for any $n_k\in \bbN$, we define $m_k\ge n_k$ as the smallest integer such that
-        \begin{equation}
-            \label{eq:mk}
-            \|x_{n} - x_{n_k}\|_2 < \delta, \qquad \forall n \in \llbracket n_k, m_k\rrbracket.
-        \end{equation}
+        We start by observing that \eqref{eq:sum-grad-alpha} and the fact that $\sum_n\alpha_n=+\infty$ imply that $\liminf_{n\to +\infty} \|\nabla f(x_n)\|_2 =0$. Let $(x_{n_k})_k\subset (x_n)_n$ be a subsequence such that $\|\nabla f(x_{n_k})\|_2 \rightarrow 0$ as $k\to +\infty$.
+        Since the sequence $(x_n)_n$ is bounded, up to extracting a further subsequence, we can assume that $x_{n_k}\rightarrow x_\infty$ for some $x_\infty\in \bar B(0,R)$. Then, by continuity of $\nabla f$ we have $\nabla f(x_\infty) =0$, which implies that $x_\infty = x^\star$ by uniqueness of the minimum.
 
-        We need to show that such an integer is well-defined. Observe that $m_k=n_k$ satisfies the condition. We are left to show that $m_k<+\infty$, which is exactly where $\sum_n\alpha_n=+\infty$ is used. Observe that, by 
-        definition of $m_k$, for any $n\in \llbracket n_k, m_k \rrbracket$ we have
+        Observe now that the sequence $(f(x_n)_n)$ is non-increasing and bounded below by $f(x^\star)$. The Bolzano-Weierstrass Theorem then implies that $f(x_n)\rightarrow f_\infty \ge f(x^\star)$.
+        But the fact that $x_{n_k}\rightarrow x^\star$ and the continuity of $f$ imply that 
         \begin{equation}
-            \|x_{n+1} - x_{n}\|_2 \le \delta,
+            f(x^\star)\le f_\infty = \lim_{n\to +\infty} f(x_{n}) = \lim_{k\to +\infty}f(x_{n_k}) =f(x^\star)
             \implies 
-            \|\nabla f(x_n)\|\ge \|\nabla f(x_n) - \nabla f(x_{n_k})\|_2 - \|\nabla f(x_{n_k})\|_2 \ge \frac{\varepsilon}2.
+            f_\infty = f(x^\star).
         \end{equation}
-        Hence, if \eqref{eq:mk} is satisfied with $m_k=+\infty$, we would have that $x_n \in B(x_{n_k},\delta)$ for any $n\ge n_k$. 
-        Letting $c>0$ be such that $\|\nabla f(x)\|_2\le c$ for any $x\in B(x_{n_k},\delta)$, by definition of the algorithm this would imply
-        \begin{equation}
-            x_n-x_{n_k} =  \sum_{m=n_k}^{n-1} (x_{m+1}-x_m)  
-            = \sum_{m=n_k}^{n-1} \alpha_m \nabla f(x_m) \in B(0,\delta) \implies 
-            \sum_{m=n_k}^{n-1} \alpha_m \le \frac{\delta}{c}, \qquad \forall n\ge n_k.
-        \end{equation}
-        This contradicts the assumption that $\sum_n \alpha_n = +\infty$, and thus $m_k$ is well-defined and finite.
-
-        We now use the definition of $m_k$ to obtain a contradiction of \eqref{eq:sum-grad-alpha}.
-        Indeed, for any $k\in \bbN$ and $n\in \llbracket n_k, m_k \rrbracket$, we have
-        \begin{equation}
-            \sum_{m=n_k}^{m_k} \alpha_m \|\nabla f(x_m)\|_2^2 = \sum_{m=n_k}^{m_k} \|x_{m+1}-x_m\|_2 \ge \|x_{m_k+1}-x_{n_k}\|_2 \ge \delta.
-        \end{equation}
-        This contradicts \eqref{eq:sum-grad-alpha}, and thus concludes the proof.
+        As a consequence, any subsequence $(x_{n_j})_j\subset(x_n)_n$ has a subsequence $(x_{n_{j_\ell}})_\ell$ which converges to some $z\in \bar B(0,R)$. Since $f(x_{n_{j_\ell}})\rightarrow f(x^\star)$, the continuity of $f$ then yelds $f(z)=f(x^\star)$, which by uniqueness of the minimum implies that $z=x^\star$.
+        This shows that $x^\star$ is the only cluster point of $(x_n)_n$, concluding the proof.
      \end{proof}
  
      \begin{remark}
