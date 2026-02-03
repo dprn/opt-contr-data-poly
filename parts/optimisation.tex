@@ -1323,7 +1323,7 @@
              \sum_{n=0}^{N-1}  \|\nabla f(x_n)\|_2^2 <+\infty \implies \lim_{n\to +\infty} \|\nabla f(x_n)\|_2^2 \rightarrow0.
          \end{equation}
 
-        In the general case, proving that $\|\nabla f(x_n)\|_2^2\rightarrow 0$ requires additional care.
+        The general requires additional care.
         We start by observing that \eqref{eq:sum-grad-alpha} and the fact that $\sum_n\alpha_n=+\infty$ imply that $\liminf_{n\to +\infty} \|\nabla f(x_n)\|_2 =0$. Let $(x_{n_k})_k\subset (x_n)_n$ be a subsequence such that $\|\nabla f(x_{n_k})\|_2 \rightarrow 0$ as $k\to +\infty$.
         Since the sequence $(x_n)_n$ is bounded, up to extracting a further subsequence, we can assume that $x_{n_k}\rightarrow x_\infty$ for some $x_\infty\in \bar B(0,R)$. Then, by continuity of $\nabla f$ we have $\nabla f(x_\infty) =0$, which implies that $x_\infty = x^\star$ by uniqueness of the minimum.
 
