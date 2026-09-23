@@ -16,11 +16,11 @@ The fundamental problem of machine learning can be formalized as follows.
 }
 
 \ex[pointwise-obs]{Linear approximation and pointwise observation}{
-    Let $\psi:[0,2\pi]\to \bbR$ be a continuous function (in particular, $\psi\in L^2([0,2\pi]))$).
+    Let $\psi:[0,2\pi]\to \bbR$ be a continuous function (in particular, $\psi\in L^2([0,2\pi])$).
     
     Consider $\{\phi_i\}_{i=1}^{+\infty}\subset L^2([0,2\pi])\cap C([0,2\pi])$ to be an orthonormal system for $L^2([0,2\pi])$, and for any $N\in \bbN$ let $\Theta = \bbR^N$ and consider
     \begin{equation}
-        \mathcal F = \left\{ \phi_\theta = \sum_{i=1}^N \theta_i \phi_i \mid \theta_i\in \bbR^N \right\}
+        \mathcal F = \left\{ \phi_\theta = \sum_{i=1}^N \theta_i \phi_i \mid \theta\in \bbR^N \right\}
     \end{equation}
 
     Assume to be given $M$ observations $\{(x_i,y_i)\}_{i=1}^M$ such that
@@ -36,16 +36,17 @@ The fundamental problem of machine learning can be formalized as follows.
 }
 
 \ex[]{Finite elements}{
-    Let $B_1(0)\subset \bbR^d$ and $\psi : B_1(0)\to \bbR$ be a real-valued function such that $\psi\in H_0^2(B_1(0))$. 
+    Let $B_1(0)\subset \bbR^d$ and $\psi : B_1(0)\to \bbR$ be a real-valued function such that $\psi\in H_0^1(B_1(0))$. 
     Then, given independent functions $\{\phi_i\}_{i=1}^N$ we can consider $\Theta=\bbR^N$ and let
     \begin{equation}
-        \mathcal F = \left\{ \phi_\theta = \sum_{i=1}^N \theta_i \phi_i \mid \theta_i\in \bbR^N \right\}
+        \mathcal F = \left\{ \phi_\theta = \sum_{i=1}^N \theta_i \phi_i \mid \theta\in \bbR^N \right\}
     \end{equation}
 
-    A typical situation, and the basis for the \emph{finite element methods}, is to know $f = \Delta \psi$, in which case one looks for $\hat \theta\in \Theta$ such that 
+    A typical situation, and the basis for the \emph{finite element methods}, is to know $f = \Delta \psi$. In this case $\psi$ itself is not accessible, and one looks for the $\hat\theta\in\Theta$ minimizing the energy
     \begin{equation}
-        \|\phi_{\hat\theta}-\psi\|_{L^2} = \min_\theta \|\phi_\theta-\psi\|_{L^2}.
+        \frac12\int_{B_1(0)} \|\nabla \phi_\theta\|_2^2 \, dx + \int_{B_1(0)} f\, \phi_\theta\, dx,
     \end{equation}
+    which amounts to minimizing $\|\phi_\theta-\psi\|_{H^1_0}$ over $\theta\in\Theta$.
 }
 
 In modern machine learning one is interested in ``going beyond'' these examples, by considering a nonlinear parametrization of the approximating family $\mcF$. That is, 
@@ -53,47 +54,47 @@ In modern machine learning one is interested in ``going beyond'' these examples,
     the map $\theta\mapsto \phi_\theta$ is nonlinear.
 \end{center}
 
-In the following we will focus on the problem of data-fitting exoked in Example~\ref{ex:pointwise-obs}, see also Example~\ref{ex:}. This is the following.
+In the following we will focus on the problem of data-fitting evoked in Example~\ref{ex:pointwise-obs}. This is the following.
 
 \dfn[data-fitting-pb]{Data-fitting problem}{
     Consider the following data:
     \begin{itemize}
         \item A function $\psi:X\to Y$ to approximate, of which only a set of samples $\mfX=\{( x_i,\psi( x_i))\mid i\in \llbracket 1,M\rrbracket\}$ is known;
-        \item A set $\mcF = \{\psi_\theta:X\to Y\mid \theta\in \Theta\}$ of possible approximations;
+        \item A set $\mcF = \{\phi_\theta:X\to Y\mid \theta\in \Theta\}$ of possible approximations;
         \item A loss function $\mcL : Y\times Y \to \bbR$.
     \end{itemize}
     Then, the data-fitting problem (or minimization of the empirical risk) is the following:
     \begin{equation}
-        \text{Find } \hat\theta\in\Theta \text{ such that } \hat\theta = \arg\min_{\theta} \frac1N \sum_{(x_i,\hat y_i)\in\mfX} \mcL(\phi_\theta(x_i),\hat y_i).
+        \text{Find } \hat\theta\in\Theta \text{ such that } \hat\theta = \arg\min_{\theta} \frac1M \sum_{i=1}^M \mcL(\phi_\theta(x_i),\psi(x_i)).
     \end{equation}
 }
 
 \begin{figure}
     \centering
     \input{images/losses.tex}
-    \caption{Typical loss functions for $Y=\bbR$ (right) and cross-entropy loss.}
+    \caption{Typical loss functions for $Y=\bbR$ (left) and the cross-entropy loss (right).}
     \label{fig:losses}
 \end{figure}
 
 When $Y$ has a vector space structure, it is natural to consider $\mcL(y,\hat y)=\ell(r)$ where $r=y-\hat y$ is called the residual.
 In this case, typical choices for the loss function are appropriate norms on the space $Y$. 
 % 
-For example, if $Y\in \bbR^n$ one tyically considers $\mcL$ to be the $\ell_1$ or the $\ell_2$. Another common choice is the \emph{Huber error loss}, which ``mixes'' the two. It is defined for $\delta>0$ as
+For example, if $Y=\bbR^n$ one typically considers $\mcL$ to be the $\ell_1$ or the $\ell_2$ norm. Another common choice is the \emph{Huber error loss}, which ``mixes'' the two. It is defined for $\delta>0$ as
 \begin{equation}
-    \mfh_\delta(r) = 
+    \mfh_\delta(r) =
     \begin{cases}
-        \frac12 \|r\|_2^2, & \text{if }\|r\|_1\le \delta\\
-        \delta\left( \|r\|_1 - \frac\delta2 \right)&\text{otherwise.}
+        \frac12 \|r\|_2^2, & \text{if }\|r\|_2\le \delta,\\
+        \delta\left( \|r\|_2 - \frac\delta2 \right)&\text{otherwise.}
     \end{cases}
 \end{equation}
 See Figure~\ref{fig:losses}, left.
 
-A special mention need to be done in the case for \emph{classification problems}, i.e., problems where the function $\psi$ assigns a discrete label (e.g., cat or dog) to the inputs. In this the relevant values for $\psi$ are $\{0,1\}$, say, but one approximate it with functions taking value in $Y=\bbR$ and interprets values different from $0$ or $1$ as uncertain.
-In this case, the most used loss function is the \emph{cross-entropy} function, which is defined by
+A special mention is due for \emph{classification problems}, i.e., problems where the function $\psi$ assigns a discrete label (e.g., cat or dog) to the inputs. In this case the relevant values for $\psi$ are $\{0,1\}$, say, but one approximates it with functions taking values in $Y=(0,1)$ (e.g., composing with a sigmoid) and interprets values different from $0$ or $1$ as uncertain.
+In this case, the most used loss function is the \emph{cross-entropy} function, which, for a prediction $y\in(0,1)$ and a label $\hat y\in\{0,1\}$, is defined by
 \begin{equation}
-    \mcL(y,\hat y) = -\left[ y \log \hat y + (1-y)\log(1-\hat y) \right].
+    \mcL(y,\hat y) = -\left[ \hat y \log  y + (1-\hat y)\log(1- y) \right].
 \end{equation}
-This function has a probabilistic interpretation and encodes, roughly speaking, the ``surprise'' of seeing $\hat y$ after the model predicted $y$.
+This function has a probabilistic interpretation and encodes, roughly speaking, the ``surprise'' of observing the label $\hat y$ when the model predicted $y$.
 See Figure~\ref{fig:losses}, right.
 
 
@@ -110,10 +111,10 @@ See Figure~\ref{fig:losses}, right.
 In this chapter we introduce and discuss the simplest example of neural network\footnote{We mostly follow \cite{petersenMathematical2025}, to which we refer for further clarifications.}.
 These are obtained by concatenating the simplest possible nonlinear operations:
 \begin{equation}
-    \phi_\theta(x) = \sigma(Wv + b), \qquad \text{where } \theta=(W,b) \in \bbR^{n\times m}\times \bbR^n.
+    \phi_\theta(x) = \sigma(Wx + b), \qquad \text{where } \theta=(W,b) \in \bbR^{n\times m}\times \bbR^n.
 \end{equation}
 Here, the function $\sigma:\bbR\to \bbR$ is a nonlinear \emph{activation} function that is assumed to be applied element-wise to the vector $Wx+b$.
-Typically activation functions are depicted in Figure~\ref{fig:activations}.
+Typical activation functions are depicted in Figure~\ref{fig:activations}.
 
 \begin{figure}[b]
     \centering
@@ -124,24 +125,24 @@ Typically activation functions are depicted in Figure~\ref{fig:activations}.
 
 \dfn[one-hidden-layer]{One-hidden layer feed-forward ANN}{
     Let $\sigma:\bbR\to \bbR$ be an activation function and let $d_1\in \bbN$.
-    A scalar-valued one-hidden layer feed-forward ANN $\psi_\theta:\bbR^d\to \bbR$ is identified by the set of parameters
+    A scalar-valued one-hidden layer feed-forward ANN $\phi_\theta:\bbR^d\to \bbR$ is identified by the set of parameters
     \begin{equation}
         \Theta = \left\{ (W_2,b_2,W_1,b_1)\in \bbR^{1\times d_1}\times \bbR\times\bbR^{d_1\times d}\times \bbR^{d_1} \right\},
     \end{equation}
     and it reads
     \begin{equation}
-        \psi_\theta(x) = W_2\, \sigma(W_1+b_1)+b_2 = \sum_{j=1}^{d_1} w_{2j} \sigma\left( \sum_{i=1}^{d} w_{ji}x_i + b_{1j} \right).
+        \phi_\theta(x) = W_2\, \sigma(W_1x+b_1)+b_2 = \sum_{j=1}^{d_1} (W_2)_{j} \,\sigma\left( \sum_{i=1}^{d} (W_1)_{ji}x_i + (b_1)_{j} \right) + b_2.
     \end{equation}
 
     Here, the \emph{architecture parameters} of the network are
     \begin{itemize}
         \item $d_1\in \bbN$ is the \emph{width} of the hidden layer;
-        \item $W_i$ it the \emph{weight} matrix for the $i$-th layer;
+        \item $W_i$ is the \emph{weight} matrix for the $i$-th layer;
         \item $b_1$ is the \emph{bias} of the \first layer.
     \end{itemize}
     }
 
-In Figure~\ref{fig:one-hidden-layer} we present an example of a one-hidden layer feed-forward ANN
+In Figure~\ref{fig:one-hidden-layer} we present an example of a one-hidden layer feed-forward ANN.
 
 \def\layersep{4cm}
 \begin{figure}[t]
@@ -149,14 +150,14 @@ In Figure~\ref{fig:one-hidden-layer} we present an example of a one-hidden layer
     \begin{adjustbox}{width=.7\textwidth}
         \input{images/ann-1-layer.tex}
     \end{adjustbox}
-    \caption{\label{fig:one-hidden-layer}Graphical illustration of an single hidden layer ANN, yielding a function from $\bbR^3$ to $\bbR$. We only explicited the weights relative to the first variable.}
+    \caption{\label{fig:one-hidden-layer}Graphical illustration of a single hidden layer ANN, yielding a function from $\bbR^3$ to $\bbR$. We only made explicit the weights relative to the first variable.}
 \end{figure}
 
 The general expression for a feed-forward ANN can then be inferred, see Figure~\ref{fig:deepANN} for a graphical representation.
 
 \dfn[feed-forward-ann]{Feed-forward fully-connected ANN}{
     Let $\sigma:\bbR\to \bbR$ be an activation function and let $d_1,\ldots, d_L\in \bbN$.
-    An $N$-hidden layer feed-forward ANN $\phi\theta:\bbR^{d_0}\to \bbR^{d_{L+1}}$ is identified by the set of parameters
+    An $L$-hidden layer feed-forward ANN $\phi_\theta:\bbR^{d_0}\to \bbR^{d_{L+1}}$ is identified by the set of parameters
     \begin{equation}
         \Theta = \left\{ (W_{L+1}, b_{L+1},\ldots,W_1,b_1) \mid W_{\ell}\in\bbR^{d_{\ell}\times d_{\ell-1}}, \, b_\ell\in \bbR^{d_\ell} \right\}.
     \end{equation}
@@ -169,20 +170,20 @@ The general expression for a feed-forward ANN can then be inferred, see Figure~\
     \begin{gather}
         \label{eq:layer-ann}
         \phi^{\ell}: x^{(\ell-1)} \in \bbR^{d_{\ell-1}}\mapsto x^{(\ell)}:=\sigma(W_\ell x^{(\ell-1)}+b_\ell)\in \bbR^{d_\ell}, \qquad \forall \ell\in \llbracket 1,L\rrbracket\\
-        \phi^{L+1}: x^{(L)} \in \bbR^{d_{L}}\mapsto x^{(L+1)}:=W_L x^{(L)}\in \bbR^{d_{L+1}}.
+        \phi^{L+1}: x^{(L)} \in \bbR^{d_{L}}\mapsto x^{(L+1)}:=W_{L+1} x^{(L)}+b_{L+1}\in \bbR^{d_{L+1}}.
     \end{gather}
 
     Here, the \emph{architecture parameters} of the network are
     \begin{itemize}
         \item $d_\ell\in \bbN$, $\ell\in \llbracket1,L\rrbracket$, is the \emph{width} of the \nth{$\ell$} hidden layer;
-        \item $W_\ell$ it the \emph{weight} matrix for the \nth{$\ell$} layer;
+        \item $W_\ell$ is the \emph{weight} matrix for the \nth{$\ell$} layer;
         \item $b_\ell$ is the \emph{bias} of the \nth{$\ell$} layer;
-        \item $x^{\ell}$ collects the output of the \emph{neurons} in the \nth{$\ell$} layer;
+        \item $x^{(\ell)}$ collects the output of the \emph{neurons} in the \nth{$\ell$} layer;
     \end{itemize}
 
 
 
-    Neural networks of depth one are called \emph{shallow}, if the depth is larger than one they are called \emph{deep}. 
+    The number $L$ of hidden layers is the \emph{depth} of the network. Neural networks of depth one are called \emph{shallow}, and if the depth is larger than one they are called \emph{deep}. 
 }
 
 \begin{figure}
@@ -192,7 +193,7 @@ The general expression for a feed-forward ANN can then be inferred, see Figure~\
         \input{images/ann.tex}
     \end{adjustbox}
 \caption{\label{fig:deepANN}Graphical illustration of a fully-connected feedforward ANN consisting of
-$N+2\in\bbN$ affine transformations (i.e., consisting of $N+1$ layers: one input layer, $N$ hidden layers, and one output layer). Image from \cite{jentzenMathematical2023}.}
+$L+1$ affine transformations (i.e., of $L+2$ layers: one input layer, $L$ hidden layers, and one output layer). Image from \cite{jentzenMathematical2023}.}
 % with $l_-1\in\bbN$ neurons on the input layer (i.e., with $l_0$-dimensional input layer), with
 % $l_0\in\bbN$ neurons on the \first hidden layer (i.e., with $l_1$-dimensional \first hidden layer),
 % with $l_1\in\bbN$ neurons on the \second hidden layer (i.e., with $l_2$-dimensional \second hidden layer),
@@ -214,8 +215,8 @@ Some notable ones are:
 
 Once a loss function has been chosen, the data-fitting problem of Definition~\ref{def:data-fitting-pb} can be solved using the algorithms presented in Chapter~\ref{chp:numerical-algo}, along with their various extensions.
 All of these algorithms, however, require the computation of the gradient of the loss function, which in turn involves differentiating the function $\phi_\theta$ from \eqref{eq:ANN}.  
-This task is particularly challenging because $\phi_\theta$ is defined as a composition of many functions. Even in the simplified case where $\sigma$ is the identity (i.e., $\sigma(x) = x$), expanding \eqref{eq:ANN} explicitly leads to a sum with an order of $d_1 \times \dots \times d_N$ terms.  
-In contemporary neural networks, the layer dimensions $d_1, \dots, d_N$ are so large that explicitly computing such a sum is completely infeasible, which is why efficient methods like backpropagation are essential.
+This task is particularly challenging because $\phi_\theta$ is defined as a composition of many functions. Even in the simplified case where $\sigma$ is the identity (i.e., $\sigma(x) = x$), expanding \eqref{eq:ANN} explicitly leads to a sum with an order of $d_1 \times \dots \times d_L$ terms.
+In contemporary neural networks, the layer dimensions $d_1, \dots, d_L$ are so large that explicitly computing such a sum is completely infeasible, which is why efficient methods like backpropagation are essential.
 
 \ass[]{}{
     Assume that the loss function $\mcL:\bbR^{d_{L+1}}\times \bbR^{d_{L+1}}\to \bbR$ is differentiable, and that a set $\mfX=\{(x_i,y_i) \in \bbR^{d_0}\times \bbR^{d_{L+1}}\mid i\in \llbracket 1,M\rrbracket\}$ is given.
@@ -235,17 +236,17 @@ We thus need to find an efficient way to compute
 We have the following.
 
 \thm[]{Backpropagation}{
-    Let $x,y\in \bbR^{d_0}$ be fixed and define $\bar x^{(\ell)},\alpha^{(\ell)}\in \bbR^{d_\ell}$ by
+    Let $x\in \bbR^{d_0}$ and $y\in\bbR^{d_{L+1}}$ be fixed and define $\bar x^{(\ell)},\alpha^{(\ell)}\in \bbR^{d_\ell}$ by
     \begin{equation}
         \label{eq:backprop}
         \begin{cases}
         \bar x^{(1)} = W_1 x + b_1, \\
-        \bar x^{(\ell)} = W_\ell \sigma(\bar x^{\ell-1})+b_\ell, \quad \ell\in \llbracket 2,L+1\rrbracket.
+        \bar x^{(\ell)} = W_\ell \sigma(\bar x^{(\ell-1)})+b_\ell, \quad \ell\in \llbracket 2,L+1\rrbracket.
         \end{cases}
         \qquad
         \begin{cases}
-            \alpha^{(L+1)} = \frac{\partial}{\partial \bar x^{L+1}}\mcL(\bar x^{L+1},y),\\
-            \alpha^{(\ell)} = \sigma'(\bar x^{\ell})\odot (W_{\ell+1})^\top \alpha^{(\ell+1)}, \quad \ell\in \llbracket L,1\rrbracket.
+            \alpha^{(L+1)} = \frac{\partial}{\partial \bar x^{(L+1)}}\mcL(\bar x^{(L+1)},y),\\
+            \alpha^{(\ell)} = \sigma'(\bar x^{(\ell)})\odot (W_{\ell+1})^\top \alpha^{(\ell+1)}, \quad \ell = L,\ldots,1.
         \end{cases}
     \end{equation}
     Here, we denoted by $\odot$ the elementwise product of vectors (i.e., $(v\odot w)_i=v_iw_i$).
@@ -259,7 +260,7 @@ We have the following.
 }
 
 \begin{remark}
-    The $(\bar x^{\ell})$ defined in \eqref{eq:backprop} satisfy $x^{(\ell)}=\sigma(\bar x^{\ell})$ for $\ell\in \llbracket1,L\rrbracket$ and $x^{(L+1)}=\bar x^{(L+1)}$, where $x^{(\ell)}=\phi^\ell(x^{(\ell-1)})$ are the outputs of the neural network. 
+    The $(\bar x^{(\ell)})$ defined in \eqref{eq:backprop} satisfy $x^{(\ell)}=\sigma(\bar x^{(\ell)})$ for $\ell\in \llbracket1,L\rrbracket$ and $x^{(L+1)}=\bar x^{(L+1)}$, where $x^{(\ell)}=\phi^\ell(x^{(\ell-1)})$ are the outputs of the neural network. 
     For this reason, $\bar x^{(\ell)}$ are called the \emph{preactivations}.
 \end{remark}
 
@@ -286,16 +287,16 @@ We start by proving the following.
     \end{equation} 
     The statement follows by \eqref{eq:backprop} and the direct computation
     \begin{equation}
-        \left(\frac{\partial\bar x^{(\ell)}}{\partial \bar x^{(\ell+1)}}\right)_{ij} = (W_\ell)_{ij}\sigma'(\bar x^{(\ell-1)}).
+        \left(\frac{\partial\bar x^{(\ell+1)}}{\partial \bar x^{(\ell)}}\right)_{ij} = (W_{\ell+1})_{ij}\,\sigma'(\bar x^{(\ell)}_j).
     \end{equation}
 \end{proof}
 
 \begin{proof}
    We focus on proving the part concerning the derivative w.r.t.~$W_\ell$, the one w.r.t.~$b_\ell$ being similar.
-   Note that $\bar x^{k}$ depends only on $(W_\ell,b_\ell)$ for $k \le \ell$. Hence, the chain rule and Lemma~\ref{th:alpha-grad} yield
+   Note that $\bar x^{(k)}$ depends on $(W_\ell,b_\ell)$ only for $k \ge \ell$. Hence, the chain rule and Lemma~\ref{th:alpha-grad} yield
    \begin{equation}
-    \frac{\partial\mcL}{\partial W_\ell}=\frac{\partial\mcL}{\partial \bar x^{(\ell)}}\frac{\partial\bar x^{\ell}}{\partial W_\ell}
-    =\alpha^{(\ell)}\frac{\partial\bar x^{\ell}}{\partial W_\ell}.
+    \frac{\partial\mcL}{\partial W_\ell}=\frac{\partial\mcL}{\partial \bar x^{(\ell)}}\frac{\partial\bar x^{(\ell)}}{\partial W_\ell}
+    =\alpha^{(\ell)}\frac{\partial\bar x^{(\ell)}}{\partial W_\ell}.
    \end{equation}
    The proof follows by definition of the preactivations $\bar x^{(\ell)}$. Indeed, we have
    \begin{eqnarray}
@@ -330,9 +331,9 @@ Thus, if $L$ is large and $c<1$, then $\alpha^{(\ell)}$ can become very small, l
 \paragraph{Dead neuron problem}
 The dead neuron problem occurs when certain neurons in the network become inactive and stop contributing to the learning process.
 This can happen when the activation function $\sigma$ outputs zero for a wide range of inputs, causing the gradients to be zero during backpropagation.
-As a result, the weights associated with these neurons do not get updated, leading to a situation where the neuron is effectively "dead" and does not participate in the network's computations.
+As a result, the weights associated with these neurons do not get updated, leading to a situation where the neuron is effectively ``dead'' and does not participate in the network's computations.
 This issue is particularly common with activation functions like the \emph{ReLU (Rectified Linear Unit)}, which outputs zero for all negative inputs.
-If a neuron consistently receives inputs that lead to zero outputs, it may never recover and continue to contribute to the network's learning.  
+If a neuron consistently receives inputs that lead to zero outputs, it may never recover, and it stops contributing to the network's learning.  
 
 More precisely, if there exists $a\in \bbR$ such that $\sigma'(x)=0$ for all $x\le a$, then any neuron receiving inputs that are always less than or equal to $a$ will have zero gradients during backpropagation.
 Consequently, the weights associated with this neuron will not be updated, leading to a dead neuron that does not contribute to the network's output or learning process.
@@ -345,7 +346,7 @@ More precisely, we show that (under certain assumptions) we can always find a ne
 To this aim we introduce the following definitions.
 
 \dfn[]{Universal approximator}{
-    A set of functions $\mathcal H$ form $\bbR^d$ to $\bbR$ is a \emph{universal approximator} (of $C^0(\bbR^d)$) if for any $\varepsilon>0$, $K\subset\bbR^d$ compact, and $f\in C^0(\bbR^d)$, there exists $g\in \mcH$ such that 
+    A set of functions $\mathcal H$ from $\bbR^d$ to $\bbR$ is a \emph{universal approximator} (of $C^0(\bbR^d)$) if for any $\varepsilon>0$, $K\subset\bbR^d$ compact, and $f\in C^0(\bbR^d)$, there exists $g\in \mcH$ such that 
     \begin{equation}
         \|f-g\|_K := \sup_{x\in K}|f(x)-g(x)|\le \varepsilon.
     \end{equation}
@@ -353,7 +354,7 @@ To this aim we introduce the following definitions.
 }
 
 \dfn[]{Neural network spaces}{
-    Let $d,m,L,n\in \bbN$ and $\sigma:\bbR\to \bbR$. The set of all functions realized by ANNs $\phi_\theta:\bbR^d\to\bbR^m$, with at most depth $L$,  width $n$, and activation function $\sigma$ is 
+    Let $d,m,L,n\in \bbN$ and $\sigma:\bbR\to \bbR$. The set of all functions realized by ANNs $\phi_\theta:\bbR^d\to\bbR^m$ of depth exactly $L$, with width at most $n$, and activation function $\sigma$ is 
     \begin{equation}
         \mcN_d^m(\sigma;L,n).
     \end{equation}
@@ -369,14 +370,14 @@ To this aim we introduce the following definitions.
 In this section, we establish the following result, which stresses why the nonlinear nature of the activation function is essential.
 
 \thm[shallow-uat]{Universal approximation for shallow neural networks}{
-    Let $\sigma:\bbR\to \bbR$ be an bounded piecewise continuous function\footnote{Here, we implicitly require that the discontinuity point be locally finite.}. Then, $\mcN_d^1(\sigma;1)$ is a universal approximator of $C^0(\bbR^d)$ if and only if $\sigma$ is not a polynomial.
+    Let $\sigma:\bbR\to \bbR$ be a bounded piecewise continuous function\footnote{Here, we implicitly require that the set of discontinuity points be locally finite.}. Then, $\mcN_d^1(\sigma;1)$ is a universal approximator of $C^0(\bbR^d)$ if and only if $\sigma$ is not a polynomial.
 }
 
 \begin{remark}
     This theorem can be extended to different functional spaces and different norms.
 \end{remark}
 
-The difficult part of this theorem (which holds for more general functions \cite{leshnoMultilayer1993}) is to establish the universal approximation property for non-polynomial activation fucntions. The reverse implication is left as an exercice.
+The difficult part of this theorem (which holds for more general functions \cite{leshnoMultilayer1993}) is to establish the universal approximation property for non-polynomial activation functions. The reverse implication is left as an exercise.
 
 The result follows from the following three facts:
 \begin{enumerate}
@@ -388,7 +389,7 @@ In particular, since $\mcN_1^1(\sigma;1)$ is a universal approximator by the sec
 
 
 Let us start by showing the first point.
-An essential tool to establish universal approximation results is the Stone-Weirstrass Theorem, that we hereby recall.
+An essential tool to establish universal approximation results is the Stone-Weierstrass Theorem, that we hereby recall.
 \thm[]{Stone-Weierstrass}{
     Let $K\subset \bbR^d$ be compact, and $\mcH\subset C^0(K,\bbR)$ be such that
     \begin{itemize}
@@ -398,7 +399,7 @@ An essential tool to establish universal approximation results is the Stone-Weir
     \end{itemize}
     Then, $\mcH$ is dense in $C^0(K,\bbR)$.
 
-    In particular, this holds when $\mcH$ is the space of real-valued polynomias and $K$ is an arbitrary compact set.
+    In particular, this holds when $\mcH$ is the space of real-valued polynomials and $K$ is an arbitrary compact set.
 }
 
 Then, we have the following.
@@ -451,25 +452,25 @@ Then, we have the following.
     \begin{equation}
         \partial^k_w f_b(x,w)=x^k\sigma^{(k)}(wx+b)
         \implies
-         \partial^k_w f_b(x,w)=x^k\sigma^{(k)}(b).
+         \partial^k_w f_b(x,0)=x^k\sigma^{(k)}(b).
     \end{equation}
-    Since $\sigma\in C^\infty(\bbR)$ is not a polynomial, for any $k$ there exsists $b_k\in \bbR$ such that $\sigma^{(k)}(b_k)\neq 0$. 
+    Since $\sigma\in C^\infty(\bbR)$ is not a polynomial, for any $k$ there exists $b_k\in \bbR$ such that $\sigma^{(k)}(b_k)\neq 0$. 
     Thus, to prove the statement it suffices to show that $\partial_w^k f_{b}(\cdot,0)\in \mcX$ for any $b$. 
 
     To this aim, consider the function $\phi_\theta\in \mcX$ given by  
     \begin{equation}
         \phi_{\theta}(x) = \frac{1}{h} \sigma((w+h)x + b) - \frac{1}{h}\sigma(wx+b).
     \end{equation}
-    This is a one-hidde layer feed-forward ANN as per Definition~\ref{def:one-hidden-layer} for the choice $d=1$, $d_1 = 2$ and 
+    This is a one-hidden layer feed-forward ANN as per Definition~\ref{def:one-hidden-layer} for the choice $d=1$, $d_1 = 2$ and 
     \begin{equation}
         W_1 = \begin{pmatrix}
-            w \\ w
+            w+h \\ w
         \end{pmatrix},
         \qquad b_1 = \begin{pmatrix}
             b \\ b
         \end{pmatrix},
         \qquad W_2=\begin{pmatrix}
-            \frac{1}{h} & \frac{1}{h}
+            \frac{1}{h} & -\frac{1}{h}
         \end{pmatrix},
         \qquad b_2 = 0.
     \end{equation}
@@ -479,13 +480,13 @@ Then, we have the following.
         = \partial_w f_b(x,w)+ \frac{h}{2}\partial_w^2 f_b(x,\xi)
         = \partial_w f_b(x,w)+\frac{h}{2}x^2\sigma''(\xi x+b).
     \end{equation}
-    But $\sigma''$ is continous, and thus for any compact set $K\subset \bbR$ we have 
+    But $\sigma''$ is continuous, and thus for any compact set $K\subset \bbR$ we have 
     \begin{equation}
         \sup_{x\in K} \sup_{|h|<1}|x^2\sigma''(\xi x+b)| \le 
         \sup_{x\in K} \sup_{|\eta-w|<1}|x^2\sigma''(\eta x+b)| <+\infty. 
     \end{equation}
-    In particular, letting $h\to 0$ we see that $\phi_\theta$ converges uniformly on $K$ to $\partial_w f_b(\cdot,w)$. Thus, $\partial_w f_b(\cdot,w)\in \mcX$.
-    Applying the argument inductively, shows that $\partial_w^kf_b(\cdot,w)\in \mcX$, completing the proof.
+    In particular, letting $h\to 0$ we see that $\phi_\theta$ converges uniformly on $K$ to $\partial_w f_b(\cdot,w)$. Thus, $\partial_w f_b(\cdot,w)$ belongs to the closure of $\mcX$ w.r.t.~uniform convergence on compact sets.
+    Applying the argument inductively shows that the same is true of $\partial_w^kf_b(\cdot,w)$, completing the proof.
 \end{proof}
 
 To conclude the proof, we need to recall the following concept.
@@ -497,66 +498,63 @@ To conclude the proof, we need to recall the following concept.
 }
 
 \lem[]{Point 3 of the proof of Theorem~\ref{th:shallow-uat}}{
-    Assume that $\sigma:\bbR\to \bbR$ is bounded and piecewise continous. Then, for any $\varphi\in C^\infty_c$ we have that $\sigma\star\varphi\in C^\infty_c(\bbR)$ is in the closure of $\mcN_1^1(\sigma;1)$ w.r.t.~uniform convergence on compact sets.
+    Assume that $\sigma:\bbR\to \bbR$ is bounded and piecewise continuous. Then, for any $\varphi\in C^\infty_c(\bbR)$ we have that $\sigma\star\varphi\in C^\infty(\bbR)$ is in the closure of $\mcN_1^1(\sigma;1)$ w.r.t.~uniform convergence on compact sets.
 
     Moreover, if $\sigma\star \varphi$ is a polynomial for any $\varphi\in C^\infty_c(\bbR)$, then $\sigma$ is a polynomial.
 }
 
 \begin{proof}
-    The fact that $\sigma\star\varphi\in C^\infty_c(\bbR)$ is standard, and follows observing that $(\sigma\star \varphi)'=\sigma\star (\varphi')$.
+    The fact that $\sigma\star\varphi\in C^\infty(\bbR)$ is standard, and follows observing that $(\sigma\star \varphi)'=\sigma\star (\varphi')$.
     For the proof of the last part of the statement, we refer to \cite[Lemma~3.15]{petersenMathematical2025}.
 
     Let us build an explicit sequence $f_n\in \mcN_1^1(\sigma;1)$ such that $f_n\rightarrow \sigma\star\varphi$ uniformly on compact sets. 
     Let $a>0$ be such that $\operatorname{supp}\varphi\subset[-a,a]$.  
-    Then, for any $n\in \bbN$ we let $y_j=-a+2a/n$ and set
+    Then, for any $n\in \bbN$ we let $h_n = 2a/n$, $y_j=-a+j h_n$ for $j\in \llbracket0,n\rrbracket$, and set
     \begin{equation}
-        f_n(x) := \frac{1}N \sum_{j=0}^{N-1} \sigma(x-y_j)\varphi(y_j).
+        f_n(x) := h_n \sum_{j=0}^{n-1} \sigma(x-y_j)\varphi(y_j).
     \end{equation}
-    It follows easily that $f_n\in \mcN_1^1(\sigma;1)$. Let us show the required convengerce on an arbitrary compact set $[-b,b]$, $b>0$.
+    This is a shallow network with $n$ neurons, all weights of the first layer equal to $1$, biases $-y_j$, and weights $h_n\varphi(y_j)$ on the output layer, so that $f_n\in \mcN_1^1(\sigma;1)$. 
+    Let us show the required convergence on an arbitrary compact set $[-b,b]$, $b>0$.
     
-    Since $y_{j+1}-y_j\le 1/n$, for any $x\in [-b,b]$ we have 
+    Since $\varphi$ vanishes outside $[-a,a]$, for any $x\in [-b,b]$ we have 
     \begin{equation}
         \label{eq:stima1}
         |\sigma\star \varphi(x)-f_n(x)| \le
-        \sum_{j=0}^{N-1} \left| \int_{y_j}^{y_{j+1}} \left( \sigma(x-y)\varphi(y)-\sigma(x-y_j)\varphi(y_j)\right)\, dy \right|.
+        \sum_{j=0}^{n-1}  \int_{y_j}^{y_{j+1}} \left| \sigma(x-y)\varphi(y)-\sigma(x-y_j)\varphi(y_j)\right|\, dy .
     \end{equation}
-    Let us bound each term in the sum above. 
-    
-    Observe that there exists $C>0$ such that 
+    Observe that all the arguments of $\sigma$ appearing above belong to the compact interval $I=[-a-b,a+b]$. 
+    By assumption, $\sigma$ has finitely many discontinuity points in $I$, say $z_1,\ldots,z_M$, and we let 
     \begin{equation}
-        \left| \sigma(x-y)\varphi(y)-\sigma(x-y_j)\varphi(y_j)\right|
-        \le C, \qquad \forall x,y\in \bbR, \, j\in \llbracket0,n-1\rrbracket.
+        Z_\delta = \bigcup_{i=1}^M (z_i-\delta,z_i+\delta), 
+        \qquad 
+        K_\delta = I\setminus Z_\delta,
+        \qquad \delta>0.
     \end{equation}
-    Then, for any $j\in \llbracket0,N-1\rrbracket$ we can estimate 
+    The set $K_\delta$ is compact, and $\sigma$ is uniformly continuous on it. We denote by $\omega_\delta$ its modulus of continuity on $K_\delta$, and by $\omega_\varphi$ the modulus of continuity of $\varphi$ on $\bbR$.
+    
+    Let us fix $\delta>0$ and split the sum in \eqref{eq:stima1} according to whether the interval $x-[y_j,y_{j+1}]$ meets $Z_\delta$ or not. 
+    
+    The union of the intervals $[y_j,y_{j+1}]$ of the first kind is contained in $\{y \mid \operatorname{dist}(x-y,\{z_1,\ldots,z_M\})\le \delta+h_n \}$, whose measure is at most $2M(\delta+h_n)$. Since, moreover, 
     \begin{equation}
         \label{eq:stima2}
-        \left| \int_{y_j}^{y_{j+1}} \left( \sigma(x-y)\varphi(y)-\sigma(x-y_j)\varphi(y_j)\right)\, dy \right|
-        \le C (y_{j+1}-y_{j}) \le \frac{C}{n}.
-    \end{equation} 
-    Recall that, by assumption, there exists $\{z_1,\ldots z_M\}\subset [-a,a]$ such that $\sigma$ is continous on $[-a,a]\setminus\{z_1,\ldots,z_M\}$. 
-    We will use the above estimate for the at most $M$ intervals containing one of the points $x-z_i$, $i\in \llbracket1,M\rrbracket$.
-    Let $J_d$ be the set of such indexes and $J_c=\llbracket0,N-1\rrbracket\setminus J_d$.
-    
-    Let us now fix $\varepsilon>0$ and such that $\varepsilon\le \min \{ \frac{|(x-z_i)-y_j|}2 \mid i\in \llbracket1,M\rrbracket \text{ and } j\in \llbracket0,n\rrbracket \}$ and consider the compact set
-    \begin{equation}
-        K = [-a,a] \setminus \bigcup_{i=1}^m (z_i-\varepsilon,z_i+\varepsilon)\supset \bigcup_{j\in J_c} [y_j,y_{j+1}].
+        \left| \sigma(x-y)\varphi(y)-\sigma(x-y_j)\varphi(y_j)\right|
+        \le 2\|\sigma\|_\infty\|\varphi\|_\infty =: C, \qquad \forall x,y\in \bbR,
     \end{equation}
-    Observe that $\sigma$ is uniformly continuous on $K$.
-    Then, for any $j\in J_c$ and $y\in [y_j,y_{j+1}]$ we have that $x-y\in K$ and $x-y_j\in K$. 
-    Thus,
+    these terms contribute at most $2CM(\delta+h_n)$ to \eqref{eq:stima1}.
+    
+    For the intervals of the second kind, both $x-y$ and $x-y_j$ belong to $K_\delta$ and are at distance at most $h_n$, so that 
     \begin{equation}
         \left| \sigma(x-y)\varphi(y)-\sigma(x-y_j)\varphi(y_j)\right|
         \le |\sigma(x-y)-\sigma(x-y_j)|\,|\varphi(y)|+|\sigma(x-y_j)|\,|\varphi(y)-\varphi(y_j)| 
-        \le \|\varphi\|_\infty \max_{\substack{s_1,s_2\in K\\|s_1-s_2|\le \frac{2a}n}}|\sigma(s_1)-\sigma(s_2)|
-        + \|sigma\|_\infty \max_{\substack{s_1,s_2\in [-a,a]\\|s_1-s_2|\le \frac{2a}n}}|\varphi(s_1)-\varphi(s_2)| := \eta_n.
+        \le \|\varphi\|_\infty \omega_\delta(h_n) + \|\sigma\|_\infty \omega_\varphi(h_n).
     \end{equation}
-    By uniform continuity of $\sigma$ on $K$ and of $\varphi$ on $[-a,a]$ we have $\eta_n(x)\rightarrow 0$ as $n\to 0$ uniformly for $x\in [-b,b]$.
-    Using  \eqref{eq:stima1} and \eqref{eq:stima2}, this shows that
+    Since these intervals are contained in $[-a,a]$, their contribution to \eqref{eq:stima1} is at most $2a\left( \|\varphi\|_\infty \omega_\delta(h_n) + \|\sigma\|_\infty \omega_\varphi(h_n) \right)$.
+    
+    Putting the two estimates together, and letting $n\to+\infty$ (so that $h_n\to 0$), we obtain
     \begin{equation}
-        |\sigma\star \varphi(x)-f_n(x)| \le 
-        \sum_{j\in J_d} \frac Cn + \sum_{j\in J_c} \frac{\eta_n(x)}{n} \le \frac{CM}n + \eta_n(x) \rightarrow 0,
+        \limsup_{n\to+\infty}\ \sup_{x\in[-b,b]} |\sigma\star \varphi(x)-f_n(x)| \le 2CM\delta.
     \end{equation}
-    uniformly for $x\in [-b,b]$.
+    Since $\delta>0$ is arbitrary, this shows that $f_n\rightarrow \sigma\star\varphi$ uniformly on $[-b,b]$.
 \end{proof}
 
 Putting together the above results, we complete the proof of Theorem~\ref{th:shallow-uat}.
@@ -565,15 +563,15 @@ Putting together the above results, we complete the proof of Theorem~\ref{th:sha
 
 As a corollary to Theorem~\ref{th:shallow-uat} we have the following.
 
-\cor[deep-uat]{Universal approximation for deep neural netowrks}{
-    Let $\sigma:\bbR\to \bbR$ be an bounded piecewise continuous function. Then, for any $L\in \bbN$, $\mcN_d^1(\sigma;L)$ is a universal approximator of $C^0(\bbR^d)$ if and only if $\sigma$ is not a polynomial.
+\cor[deep-uat]{Universal approximation for deep neural networks}{
+    Let $\sigma:\bbR\to \bbR$ be a bounded piecewise continuous function. Then, for any $L\in \bbN$, $\mcN_d^1(\sigma;L)$ is a universal approximator of $C^0(\bbR^d)$ if and only if $\sigma$ is not a polynomial.
 }
 
 The proof reduces to show that it is possible to approximate the identity with a deep network with $L-1$ layers. This is contained in the following.
 
 \prop[deep-identity]{}{
-    Let $\sigma:\bbR\to \bbR$ be differentiable and non constant on an open set.
-    The, for any $L\in \bbN$ and $\varepsilon>0$, there exists a neural network $\phi\in \mcN_d^d(\sigma;L,d)$ such that 
+    Let $\sigma:\bbR\to \bbR$ be differentiable at some point $s^\star$ with $\sigma'(s^\star)\neq 0$.
+    Then, for any $L\in \bbN$, any compact set $K\subset \bbR^d$, and any $\varepsilon>0$, there exists a neural network $\phi\in \mcN_d^d(\sigma;L,d)$ such that
     \begin{equation}
         |\phi(x)-x|\le \varepsilon, \qquad  \forall x\in K.
     \end{equation}
@@ -596,11 +594,11 @@ The proof reduces to show that it is possible to approximate the identity with a
 
 
 \noindent\textbf{\em Proof of Corollary~\ref{th:deep-uat}:}
-    We already know that $\mcN_d^1(\sigma;1)$ is an universal approximator. That is, for any $f\in C(\bbR^d)$, for any $K$ compact and any $\varepsilon>0$ there exists a shallow netowrk $\phi_1\in \mcN_d^1(\sigma;1)$ such that 
+    We already know that $\mcN_d^1(\sigma;1)$ is a universal approximator. That is, for any $f\in C(\bbR^d)$, for any $K$ compact and any $\varepsilon>0$ there exists a shallow network $\phi_1\in \mcN_d^1(\sigma;1)$ such that 
     \begin{equation}
         \| f - \phi_1\|_K \le \frac\varepsilon2.
     \end{equation}
-    Concatenanting this with the deep network approximating the identity given by Proposition~\ref{prop:deep-identity} completes the proof.
+    Let $K'$ be a compact neighborhood of $K$. Since $\phi_1$ is uniformly continuous on $K'$, there exists $\rho>0$ such that $|\phi_1(z)-\phi_1(x)|\le \varepsilon/2$ whenever $x\in K$ and $|z-x|\le\rho$, with $z\in K'$. Applying Proposition~\ref{prop:deep-identity} with this $\rho$, and concatenating the resulting network of depth $L-1$ with $\phi_1$, we obtain a network in $\mcN_d^1(\sigma;L)$ which is $\varepsilon$-close to $f$ on $K$, completing the proof.
 \qed
 
 \subsection{Further results}
@@ -609,7 +607,7 @@ We conclude this chapter by mentioning the following remarkable result stating t
 We refer to \cite[Section~3.2]{petersenMathematical2025} for a proof, based on the Kolmogorov's superposition theorem.
 
 \thm[]{Universal approximation via superexpressive activations}{
-    There exists a continuous activation function $\sigma:\bbR\to \bbR$ such that for every compact $K\subset\bbR^d$, every $\varepsilon>0$, and every $f\in C(K)$, there exists\footnote{That is, $\operatorname{width}\phi = 2d^2+2$ and $\operatorname{depth}\phi=2$} $\phi\in \mcN_d^1(\sigma; 2,2d^2+d)$ such that
+    There exists a continuous activation function $\sigma:\bbR\to \bbR$ such that for every compact $K\subset\bbR^d$, every $\varepsilon>0$, and every $f\in C(K)$, there exists\footnote{That is, $\operatorname{width}\phi = 2d^2+d$ and $\operatorname{depth}\phi=2$.} $\phi\in \mcN_d^1(\sigma; 2,2d^2+d)$ such that
     \begin{equation}
         |f(x)-\phi(x)|\le \varepsilon, \qquad \forall x\in K.
     \end{equation}
@@ -624,18 +622,18 @@ These are defined as follows.
 
 \dfn[resnet]{Residual neural network}{
     Let $\sigma:\bbR\to \bbR$ be an activation function and let $d\in \bbN$.
-    An $N$-hidden layer ResNet $\Phi_\theta:\bbR^{d}\to \bbR^{d}$ is identified by the set of parameters
+    An $L$-hidden layer ResNet $\Phi_\theta:\bbR^{d}\to \bbR^{d}$ is identified by the set of parameters
     \begin{equation}
-        \Theta = \left\{ (W^{(1)}_{\ell}, b^{(1)}_{\ell},W^{(2)}_{\ell}, b^{(2)}_{\ell})_{\ell=1}^{L+1} \mid W_{\ell}^{(i)}\in\bbR^{d\times d}, \, b_\ell^{(i)}\in \bbR^{d}, i =1,2\right\}.
+        \Theta = \left\{ (W^{(1)}_{\ell}, b^{(1)}_{\ell},W^{(2)}_{\ell}, b^{(2)}_{\ell})_{\ell=1}^{L} \mid W_{\ell}^{(i)}\in\bbR^{d\times d}, \, b_\ell^{(i)}\in \bbR^{d}, i =1,2\right\}.
     \end{equation}
     The corresponding function is then
     \begin{equation}
-        \label{eq:ANN}
-        \Phi_\theta(x) = \Phi^{L+1} \circ \Phi^L \circ\cdots\Phi^1(x),
+        \label{eq:resnet}
+        \Phi_\theta(x) = \Phi^{L} \circ \Phi^{L-1} \circ\cdots\circ\Phi^1(x),
     \end{equation}
     where, each layer $\Phi^\ell:\bbR^{d}\to \bbR^{d}$ is given by
     \begin{equation}
-        \Phi^{\ell}(x) : x^{(\ell-1)} \in \bbR^{d} \mapsto x^{(\ell-1)} + \phi^\ell(x^{(\ell-1)}) \in \bbR^{d},   \qquad \ell\in \llbracket1,L\rrbracket,
+        \Phi^{\ell}: x^{(\ell-1)} \in \bbR^{d} \mapsto x^{(\ell-1)} + \phi^\ell(x^{(\ell-1)}) \in \bbR^{d},   \qquad \ell\in \llbracket1,L\rrbracket,
     \end{equation} 
     for some standard $2$-layer feed-forward ANN $\phi^\ell:\bbR^{d}\to \bbR^{d}$ defined by   
     \begin{equation}
@@ -645,7 +643,7 @@ These are defined as follows.
 
 The advantage of ResNets is that the skip connections (i.e., the addition of the input $x^{(\ell-1)}$ to the output of the layer $\phi^\ell$) help in mitigating issues like vanishing gradients during training evoked in Section~\ref{sec:issues-learning}. Indeed, adapting the backpropagation algorithm to ResNets, one can see that the gradients $\alpha^{(\ell)}$ defined in \eqref{eq:backprop} satisfy
 \begin{equation}
-    \alpha^{(\ell)} = \alpha^{(\ell+1)} + \left[\frac{\partial \phi^{\ell+1}}{\partial x^{(\ell)}}\right]^\top \alpha^{(\ell+1)}, \qquad \ell\in \llbracket1,L\rrbracket,
+    \alpha^{(\ell)} = \alpha^{(\ell+1)} + \left[\frac{\partial \phi^{\ell+1}}{\partial x^{(\ell)}}\right]^\top \alpha^{(\ell+1)}, \qquad \ell\in \llbracket1,L-1\rrbracket,
 \end{equation}
 which prevents them from vanishing too quickly.
 
@@ -662,7 +660,7 @@ In particular, letting $u=(W^{(1)},b^{(1)},W^{(2)},b^{(2)})$ denote
 \begin{equation}
     F(x,u) :=  W^{(2)} \sigma(W^{(1)} x + b^{(1)}) + b^{(2)}.
 \end{equation}
-Then, fixing $\eta=1$, the ResNet defined by the parameters $\theta = \{(W_\ell^{(1)},b_\ell^{(1)},W_\ell^{(2)}, b_\ell^{(2)})\}_{\ell=1}^{L+1}$ can be rewritten as
+Then, given a step $\eta>0$, the ResNet defined by the parameters $\theta = \{(W_\ell^{(1)},b_\ell^{(1)},W_\ell^{(2)}, b_\ell^{(2)})\}_{\ell=1}^{L}$ can be rewritten as
 \begin{equation}
     x^{(\ell)} = x^{(\ell-1)} + \eta F(x^{(\ell-1)},u_\ell), \qquad \ell\in \llbracket1,L\rrbracket,
 \end{equation}
@@ -673,10 +671,10 @@ Rearranging the terms, we have
 \end{equation}
 Thus, the ResNet can be seen as the Euler discretization of the ODE
 \begin{equation}
-    \dot x(t)= F(x(t),u(t)), \qquad t\in [0,L],
+    \dot x(t)= F(x(t),u(t)), \qquad t\in [0,L\eta],
 \end{equation}
-with initial condition $x(0)=x\in \bbR^{d_0}$ and control $u$ defined as $u(t) = u_\ell$ for $t\in [(\ell-1)\eta, \ell \eta)$.
-Rescaling the time variable as $t\mapsto t/L$ and letting $L\to +\infty$ we then obtain the continuous-time limit
+with initial condition $x(0)=x\in \bbR^{d}$ and control $u$ defined as $u(t) = u_\ell$ for $t\in [(\ell-1)\eta, \ell \eta)$.
+Choosing $\eta=1/L$, so that the total time is $L\eta =1$, and letting $L\to +\infty$, we then obtain the continuous-time limit
 \begin{equation}
     \dot x(t) = F(x(t),u(t)), \qquad t\in [0,1].
 \end{equation}
@@ -707,7 +705,7 @@ More precisely, we have the following.
 We summarize the previous observation in the following result.
 
 \thm[neural-ODE]{Neural ODEs}{
-    Then, for any control $u\in L^\infty([0,1];U)$ and $\varepsilon>0$ there exists a sufficiently small $\eta>0$ such that the solution $x_u$ of the neural ODE satisfies
+    Let $u:[0,1]\to U$ be piecewise continuous and bounded. Then, for any $\varepsilon>0$ there exists $L_0\in\bbN$ such that, for any $L\ge L_0$, the solution $x_u$ of the neural ODE satisfies
     \begin{equation}
          |x_u(\ell/L) - x^{(\ell)}| \le \varepsilon,
          \qquad 
@@ -716,7 +714,7 @@ We summarize the previous observation in the following result.
     where $x^{(\ell)}$ are the layers outputs of the ResNet defined by
     \begin{equation}
         x^{(\ell)}
-        = x^{(\ell-1)} + \frac1L F(x^{(\ell-1)},u(\ell-1)), \qquad \ell\in \llbracket1,L\rrbracket.
+        = x^{(\ell-1)} + \frac1L F\left(x^{(\ell-1)},u\left(\tfrac{\ell-1}L\right)\right), \qquad \ell\in \llbracket1,L\rrbracket.
     \end{equation}
     }
 The above result says that a ResNet with $L\gg1$ layers can be seen as the approximation of the flow of a neural ODE, that is, 
@@ -737,19 +735,19 @@ The results in the following sections discuss recent advances in this direction 
 
 \subsection{Training via optimal control}
 
-Let us consider the training problem detailed in Definition~\ref{def:data-fitting-pb}, for a set of data $\mfX=\{(x_i,y_i)\}_{i=1}^N\subset \bbR^d\times \bbR^d$.
+Let us consider the training problem detailed in Definition~\ref{def:data-fitting-pb}, for a set of data $\mfX=\{(x_i,y_i)\}_{i=1}^N\subset \bbR^d\times \bbR^d$ with pairwise distinct $x_i$.
 Using the neural ODE formalism, the training of a ResNet with $L$ layers is related to the following optimal control problem 
 \begin{equation}
     \label{eq:neural-ODE-training}
     \text{Find } u^\star\in L^\infty([0,1];U) \text{ such that }
-    u^\star = \arg\min_{u\in L^\infty([0,1];U)} \frac1N \sum_{i=1}^N \ell(\Phi_u(x_i),y_i),
+    u^\star = \arg\min_{u\in L^\infty([0,1];U)} \frac1N \sum_{i=1}^N \mcL(\Phi_u(x_i),y_i),
 \end{equation}
 where $\Phi_u$ is the flow of the neural ODE defined in Definition~\ref{def:neural-ODE}.
 
 Under mild assumptions on $\mcL$ (namely that $\mcL(x,x)=0$ for any $x\in \bbR^d$), we have that the solution to the above is obtained at zero cost if the following controllability property holds.
 
 \dfn[]{Simultaneous controllability}{
-    The neural ODE defined in Definition~\ref{def:neural-ODE} is said to be \emph{simultaneously controllable} on a set $\Omega\subset \bbR^d$ if for any $N\in \bbN$, any set of points $\{x_1,\ldots,x_N\}\subset \Omega$ and any set of target points $\{y_1,\ldots,y_N\}\subset \Omega$, there exists a control $u\in L^\infty([0,1];U)$ such that the corresponding flow $\Phi_u$ satisfies
+    The neural ODE defined in Definition~\ref{def:neural-ODE} is said to be \emph{simultaneously controllable} on a set $\Omega_N\subset (\bbR^d)^N$ of admissible ensembles if for any $N\in \bbN$, any ensemble of points $(x_1,\ldots,x_N)\in \Omega_N$ and any ensemble of target points $(y_1,\ldots,y_N)\in \Omega_N$, there exists a control $u\in L^\infty([0,1];U)$ such that the corresponding flow $\Phi_u$ satisfies
     \begin{equation}
         \Phi_u(x_i) = y_i, \qquad \forall i\in \llbracket1,N\rrbracket.
     \end{equation}
@@ -772,14 +770,14 @@ A result in this direction has been recently obtained in \cite{tabuadaUniversal2
     Assume that the activation function $\sigma:\bbR\to \bbR$ is such that 
     \begin{itemize}
         \item $\sigma$ is Lipschitz continuous and such that  $\sigma'(s)\ge 0$;
-        \item there exists $j\in\bbN_0$, $a_1,a_2,a_3\in \bbR$, $a_2\neq 0$, such that $\eta(s):=\sigma^{(j)}(s)$ is injective and such that
+        \item there exists $j\in\bbN_0$ and $a_1,a_2,a_3\in \bbR$ with $a_3\neq 0$, such that $\eta(s):=\sigma^{(j)}(s)$ is injective and such that
         \begin{equation}
             \eta'(s) = a_1 + a_2 \eta(s) + a_3 \eta(s)^2, \qquad \forall s\in \bbR.
         \end{equation}
     \end{itemize}
-    Then, the neural ODE defined in Definition~\ref{def:neural-ODE} is simultaneously controllable on the set 
+    Then, the neural ODE defined in Definition~\ref{def:neural-ODE} is simultaneously controllable on the set of ensembles whose points are pairwise distinct in every coordinate, that is,
     \begin{equation}
-        \Omega = \{ x\in \bbR^d \mid x_i \neq x_j, \, \forall i\neq j\}.
+        \Omega_N = \left\{ (x_1,\ldots,x_N)\in (\bbR^d)^N \;\middle|\; (x_i)_k \neq (x_j)_k, \, \forall i\neq j,\, \forall k\in\llbracket1,d\rrbracket\right\}.
     \end{equation}
 }
 
@@ -793,7 +791,7 @@ This approach has two problems, however:
 
 To this end, an alternative approach studied in \cite{scagliottiEnsembles2022} consists in considering a relaxed version of the simultaneous controllability problem, where one looks for a control $u$ minimizing the cost functional
 \begin{equation}
-    J(u) = \frac1N \sum_{i=1}^N \| \Phi_u(x_i) - y_i|^2 + \frac{\beta}2  \|u(t)\|_2^2.
+    J(u) = \frac1N \sum_{i=1}^N \| \Phi_u(x_i) - y_i\|_2^2 + \frac{\beta}2 \int_0^1 \|u(t)\|_2^2\, dt.
 \end{equation}
 
 
@@ -810,7 +808,7 @@ To this end, an alternative approach studied in \cite{scagliottiEnsembles2022} c
 %     where $x_u$ is the solution of the neural ODE with control $u$ and initial condition $x$.
 % }
 
-Observe, that $u\mapsto \Phi_u$ defines a family of diffeomorphisms of $\bbR^d$ parametrized by the controls $u$.
+Observe that $u\mapsto \Phi_u$ defines a family of diffeomorphisms of $\bbR^d$ parametrized by the controls $u$.
 Since by Theorem~\ref{th:neural-ODE} ResNets approximate the flow of neural ODEs, it is natural to study the expressivity of ResNets via the properties of the family of diffeomorphisms $\{\Phi_u \mid u\in L^\infty([0,1];U)\}$.
 More precisely, we have the following immediate consequence of Theorem~\ref{th:neural-ODE}.
 
@@ -823,7 +821,7 @@ More precisely, we have the following immediate consequence of Theorem~\ref{th:n
     In particular, if for any compact $K\subset \bbR^d$ the family $\{\Phi_u \mid u\in L^\infty([0,1];U)\}$ is dense in $C^0(K,\bbR^d)$, then $\resnet^d(\sigma;d)$ is a universal approximator of $C^0(\bbR^d,\bbR^d)$.
 }
 
-Observe that the density of the family $\{\Phi_u \mid u\in L^\infty([0,1];U)\}$ in $C^0(K,\bbR^d)$ is a much stronger assumption that the notion of controllability defined in Definition~\ref{def:controllability} and the one of simultaneous controllability defined above. 
+Observe that the density of the family $\{\Phi_u \mid u\in L^\infty([0,1];U)\}$ in $C^0(K,\bbR^d)$ is a much stronger assumption than the notion of controllability defined in Definition~\ref{def:controllability} and the one of simultaneous controllability defined above. 
 Indeed, here we need to be able to find a single control that steers any point $x\in K$ to any target point $y:=f(x)$, for a given continuous function $f:K\to \bbR^d$.
  
 % Moreover, for topological reasons, it is not possible to approximate arbitrary continuous functions with diffeomorphisms obtained as flows of ODEs.
@@ -872,7 +870,7 @@ The above theorem can be extended to general continuous functions assuming that 
 
 \thm[]{}{
     Assume that $\sigma$ satisfies the assumptions of Theorem~\ref{th:simultaneous-control} and let $d'$ be such that $d=2d'+1$.
-    Then, for any compact set $K\subset \bbR^d$ and any continuous function $f:K\to \bbR^{d'}$, for any $\varepsilon>0$ there exists a control $u\in L^\infty([0,1];U)$, an injection $\alpha:\bbR^{d'}\to \bbR^{2d'+1}$, and a projection $\beta:\bbR^{2d'+1}\to \bbR^{d'}$, such that 
+    Then, for any compact set $K\subset \bbR^{d'}$ and any continuous function $f:K\to \bbR^{d'}$, for any $\varepsilon>0$ there exists a control $u\in L^\infty([0,1];U)$, an injection $\alpha:\bbR^{d'}\to \bbR^{2d'+1}$, and a projection $\beta:\bbR^{2d'+1}\to \bbR^{d'}$, such that 
     \begin{equation}
         \| f - \beta\circ \Phi_u\circ\alpha\|_K \le \varepsilon.
     \end{equation}

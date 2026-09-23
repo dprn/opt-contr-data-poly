@@ -6,6 +6,11 @@
 \usepackage[backend=biber,style=numeric]{biblatex}
 \addbibresource{biblio.bib}
 
+% Allow long URLs in the bibliography to break at digits and letters.
+\setcounter{biburlnumpenalty}{100}
+\setcounter{biburlucpenalty}{100}
+\setcounter{biburllcpenalty}{100}
+
 \DeclareMathOperator{\End}{End}
 \DeclareMathOperator{\feas}{\Phi}
 \DeclareMathOperator{\idty}{Id}
@@ -21,7 +26,7 @@
 \begin{document}
 	
 	\thispagestyle{empty}
-	\mytitlec{Optimisation, Control,}{and Data}{Dario Prandi}{dario.prandi@centralesupelec.fr}{2025}
+	\mytitlec{Optimisation, Control,}{and Data}{Dario Prandi}{dario.prandi@centralesupelec.fr}{2026}
 	\newpage% or \cleardoublepage
 	\tableofcontents
 	

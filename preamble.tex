@@ -2,12 +2,16 @@
 % PACKAGE IMPORTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% T1 encoding: without it, underscores and tildes are dropped from the URLs
+% printed in the bibliography.
+\usepackage[T1]{fontenc}
 
 \usepackage[tmargin=2cm,rmargin=1in,lmargin=1in,margin=0.85in,bmargin=2cm,footskip=.2in]{geometry} % I woulld suggest dont play with the margin. It kind of ruins the contents page.
 \usepackage{amsmath,amsfonts,amsthm,amssymb,mathtools}
 \usepackage{bookmark}
 \usepackage[inline]{enumitem}
 \usepackage{cancel}
+\usepackage{xurl} % allow long bibliography URLs to break across lines
 \usepackage{hyperref,theoremref}
 \hypersetup{
 	colorlinks=true, linkcolor=doc!80, urlcolor=doc!80, citecolor=mydefinitfr!80!black,
