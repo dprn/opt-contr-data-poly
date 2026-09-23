@@ -825,7 +825,7 @@
  
  For a proof of the above result, we refer to \cite[Section 5.3.2]{boydConvex2023}.
  
- \ex{$\ell_1$-minimization problem}{
+ \ex[l1-min]{$\ell_1$-minimization problem}{
  Consider the optimization problem
  \begin{equation}
      \min_{x\in \bbR^d} \|x\|_1 \qquad \text{subject to}\qquad Ax=y,
@@ -1072,7 +1072,7 @@
  
      We have the following.
  
-     \thm{Penalty method}{
+     \thm[penalty-method]{Penalty method}{
          % Assume that \eqref{eq:op-eta} is strictly feasible, in the sense that there exists $x^\star\in\bbR^d$ such that $F_1(x^\star)<\eta$. 
          Assume that $F_0,F_1$ are lower semicontinuous and satisfy the assumptions of Theorem~\ref{th:slater}.
          Then, for $x^\star\in \bbR^d$ the following statements are equivalent:
@@ -1105,24 +1105,210 @@
      \end{remark}
  
      \section{Karush-Kuhn-Tucker (KKT) conditions}
+     \label{sec:kkt}
 
-        The Karush-Kuhn-Tucker (KKT) conditions provide necessary (and under suitable assumptions also sufficient) optimality conditions for constrained optimization problems, extending the saddle-point property discussed in Theorem~\ref{th:saddle-point}. See \cite{rudinConvex} for a proof and more details.
+     By Theorem~\ref{th:suff-cond-minimum}, a point $x^\star$ minimizes a convex function $F_0$ over the whole of $\bbR^d$ if and only if $0\in \partial F_0(x^\star)$, which reads $\nabla F_0(x^\star)=0$ when $F_0$ is differentiable. This is Fermat's rule, and it is the prototype of every optimality condition we will meet.
 
-        \thm[kkt]{Karush-Kuhn-Tucker (KKT) Theorem}{
-            Consider the convex optimization problem \eqref{eq:op} and assume that $F_0,\ldots, F_M$ are differentiable functions.
-            Assume that $(x^\star,\xi^\star,\nu^\star)\in \bbR^d\times \bbR^m\times \bbR^M$ satisfies the following conditions:
-            \begin{itemize}
-                \item Primal feasibility: $Ax^\star = y$ and $F_j(x^\star)\le 0$ for any $j\in \llbracket1,M\rrbracket$;
-                \item Dual feasibility: $\nu_j^\star \ge 0$ for any $j\in \llbracket1,M\rrbracket$;
-                \item Complementary slackness: $\nu_j^\star F_j(x^\star) = 0$ for any $j\in \llbracket1,M\rrbracket$;
-                \item Stationarity: it holds
-                      \begin{equation}
-                          \nabla F_0(x^\star) + A^\top \xi^\star + \sum_{j=1}^M \nu_j^\star \nabla F_j(x^\star) = 0.
-                      \end{equation}
-            \end{itemize}
-            Then, $(x^\star,\xi^\star,\nu^\star)$ is a primal-dual optimal for \eqref{eq:op}.
-            If, moreover, strong duality holds, then any primal-dual optimal satisfies the above conditions.
-        }
+     At a minimizer of the constrained problem \eqref{eq:op} the gradient of $F_0$ has no reason to vanish: the objective still decreases in some directions, but those directions all leave the feasible set $\feas$. The Karush-Kuhn-Tucker (KKT) conditions make this precise. They state that $-\nabla F_0(x^\star)$ is balanced by the gradients of the constraints that are saturated at $x^\star$, the weights in this balance being exactly the dual variables of Section~\ref{chp:optimization-problems}.
+
+     \dfn[kkt]{KKT conditions}{
+         Consider the optimization problem \eqref{eq:op} with $F_0,\ldots,F_M$ differentiable. A triple $(x^\star,\xi^\star,\nu^\star)\in \bbR^d\times\bbR^m\times\bbR^M$ satisfies the \emph{KKT conditions} if
+         \begin{itemize}
+             \item \emph{Primal feasibility}: $Ax^\star = y$ and $F_j(x^\star)\le 0$ for any $j\in \llbracket1,M\rrbracket$;
+             \item \emph{Dual feasibility}: $\nu_j^\star \ge 0$ for any $j\in \llbracket1,M\rrbracket$;
+             \item \emph{Complementary slackness}: $\nu_j^\star F_j(x^\star) = 0$ for any $j\in \llbracket1,M\rrbracket$;
+             \item \emph{Stationarity}: it holds
+                   \begin{equation}
+                       \label{eq:kkt-stationarity}
+                       \nabla F_0(x^\star) + A^\top \xi^\star + \sum_{j=1}^M \nu_j^\star \nabla F_j(x^\star) = 0.
+                   \end{equation}
+         \end{itemize}
+     }
+
+     The four conditions are of three different kinds. Primal and dual feasibility only say that $x^\star$ is admissible for \eqref{eq:op} and $(\xi^\star,\nu^\star)$ for \eqref{eq:dp}. Stationarity is nothing but
+     \begin{equation}
+         \nabla_x L(x^\star,\xi^\star,\nu^\star) = 0,
+     \end{equation}
+     that is, Fermat's rule for the Lagrange function at fixed multipliers. Complementary slackness is the genuinely new condition, and it is the one that couples the primal and the dual variable.
+
+     The KKT theorem splits into two halves, which do not require the same hypotheses. A KKT triple is a certificate of optimality that can be checked on its own, and producing one proves at the same time that strong duality holds. The converse statement has to be paid for with a constraint qualification, failing which a duality gap leaves the argument with no reason to close.
+
+     \thm[kkt-sufficient]{KKT conditions are sufficient}{
+         Consider the convex optimization problem \eqref{eq:op}, with $F_0,\ldots,F_M$ differentiable, and let $(x^\star,\xi^\star,\nu^\star)$ satisfy the KKT conditions. Then $(x^\star,\xi^\star,\nu^\star)$ is a primal-dual optimal for \eqref{eq:op} and strong duality holds.
+     }
+
+     \begin{proof}
+         Since the problem is convex and $\nu_j^\star\ge 0$ for any $j$, the function $x\mapsto L(x,\xi^\star,\nu^\star)$ is convex and differentiable. Stationarity says that its gradient vanishes at $x^\star$, so Theorem~\ref{th:suff-cond-minimum} gives that $x^\star$ minimizes it. Hence,
+         \begin{equation}
+             H(\xi^\star,\nu^\star)
+             = L(x^\star,\xi^\star,\nu^\star)
+             = F_0(x^\star) + \underbrace{\langle \xi^\star, Ax^\star-y\rangle}_{=0}
+             + \underbrace{\sum_{j=1}^M \nu_j^\star F_j(x^\star)}_{=0}
+             = F_0(x^\star),
+         \end{equation}
+         where the two vanishing terms come respectively from primal feasibility and from complementary slackness.
+
+         On the other hand, $x^\star$ is feasible, so $F_0(x^\star)\ge p^\star$, and weak duality (Proposition~\ref{prop:weak-duality}) gives $p^\star\ge d^\star \ge H(\xi^\star,\nu^\star)$. Chaining these inequalities yields
+         \begin{equation}
+             F_0(x^\star)\ge p^\star \ge d^\star \ge H(\xi^\star,\nu^\star) = F_0(x^\star),
+         \end{equation}
+         so that all of them are equalities. That is, $F_0(x^\star)=p^\star=d^\star=H(\xi^\star,\nu^\star)$, which is the statement.
+     \end{proof}
+
+     \thm[kkt-necessary]{KKT conditions are necessary}{
+         Consider the convex optimization problem \eqref{eq:op}, with $F_0,\ldots,F_M$ differentiable, and assume that strong duality holds and that both optimal values are attained. Then every primal-dual optimal $(x^\star,\xi^\star,\nu^\star)$ satisfies the KKT conditions.
+
+         In particular, by Theorem~\ref{th:slater}, this is the case as soon as Slater's constraint qualification is satisfied and \eqref{eq:op} admits a minimizer.
+     }
+
+     \begin{proof}
+         Primal and dual feasibility hold by definition of primal-dual optimal. Using strong duality and then the definition of $H$, we obtain
+         \begin{equation}
+             \label{eq:kkt-chain}
+             F_0(x^\star) = p^\star = d^\star = H(\xi^\star,\nu^\star)
+             = \inf_{x\in\bbR^d} L(x,\xi^\star,\nu^\star)
+             \le L(x^\star,\xi^\star,\nu^\star)
+             = F_0(x^\star) + \sum_{j=1}^M \nu_j^\star F_j(x^\star)
+             \le F_0(x^\star).
+         \end{equation}
+         Here the last equality uses $Ax^\star=y$, and the last inequality uses $\nu_j^\star\ge0$ together with $F_j(x^\star)\le 0$. Both ends of \eqref{eq:kkt-chain} being equal, the two inequalities are in fact equalities.
+
+         Equality in the second one gives $\sum_{j=1}^M \nu_j^\star F_j(x^\star) = 0$. Since every term of this sum is non-positive, every term vanishes, which is complementary slackness.
+
+         Equality in the first one says that the infimum of $x\mapsto L(x,\xi^\star,\nu^\star)$ is attained at $x^\star$. By Theorem~\ref{th:suff-cond-minimum}, this yields $\nabla_x L(x^\star,\xi^\star,\nu^\star)=0$, which is stationarity.
+     \end{proof}
+
+     \subsection{Complementary slackness and sensitivity}
+
+     Complementary slackness is easiest to read through the constraints it selects. Let us call a constraint $j\in\llbracket1,M\rrbracket$ \emph{active} at a feasible point $x$ if $F_j(x)=0$, and let
+     \begin{equation}
+         \mcA(x) = \{ j\in \llbracket 1,M\rrbracket \mid F_j(x)=0 \}
+     \end{equation}
+     be the \emph{active set}. Complementary slackness says that $\nu_j^\star=0$ for every $j\notin \mcA(x^\star)$: an inequality constraint that is not saturated at the optimum carries no multiplier, and may be removed from the problem without changing its solution locally. Only the active constraints appear in \eqref{eq:kkt-stationarity}, which therefore reads
+     \begin{equation}
+         \label{eq:kkt-active}
+         -\nabla F_0(x^\star) = A^\top \xi^\star + \sum_{j\in \mcA(x^\star)} \nu_j^\star \nabla F_j(x^\star).
+     \end{equation}
+
+     The multipliers also measure how much each constraint costs. Perturb the $j$-th constraint into $F_j(x)\le \eta_j$ and denote by $p^\star(\eta)$ the resulting optimal value, so that $p^\star(0)=p^\star$. The Lagrange function of the perturbed problem is $L(x,\xi,\nu)-\langle \nu,\eta\rangle$, so its dual function at $(\xi^\star,\nu^\star)$ equals $d^\star - \langle\nu^\star,\eta\rangle$. Weak duality for the perturbed problem and strong duality for the original one then give
+     \begin{equation}
+         p^\star(\eta) \ge p^\star - \langle \nu^\star,\eta\rangle, \qquad \forall \eta \in \bbR^M.
+     \end{equation}
+     The map $\eta\mapsto p^\star(\eta)+\langle\nu^\star,\eta\rangle$ is therefore minimal at $\eta=0$, and when $p^\star$ is differentiable there this forces
+     \begin{equation}
+         \frac{\partial p^\star}{\partial \eta_j}(0) = -\nu_j^\star.
+     \end{equation}
+     A large multiplier signals a constraint whose relaxation would pay off, which is why $\nu_j^\star$ is also called the \emph{shadow price} of the $j$-th constraint.
+
+     This is exactly the mechanism behind the penalty method of Section~\ref{sec:saddle-point}. Indeed, the proof of Theorem~\ref{th:penalty-method} produces the penalization parameter as $\lambda = \nu^\star$, the optimal multiplier of the constraint that is being penalized.
+
+     \subsection{Geometric interpretation}
+     \label{sec:kkt-geometry}
+
+     Identity \eqref{eq:kkt-active} says that $-\nabla F_0(x^\star)$ belongs to a specific convex cone. Let us make this precise.
+
+     \dfn[normal-cone]{Normal cone}{
+         Let $C\subset \bbR^d$ be a convex set and $x\in C$. The \emph{normal cone} to $C$ at $x$ is
+         \begin{equation}
+             \mcN_C(x) = \left\{ v\in \bbR^d \mid \langle v, z-x\rangle \le 0 \quad \forall z\in C \right\}.
+         \end{equation}
+     }
+
+     Geometrically, $\mcN_C(x)$ collects the directions along which one cannot move while staying in $C$, at least to first order. Being an intersection of half-spaces through the origin, it is a closed convex cone. It reduces to $\{0\}$ at interior points of $C$. For a convex cone $K$ one has $\mcN_K(0)=-K^*$, with $K^*$ the dual cone of Definition~\ref{def:dual-cone}.
+
+     The normal cone turns Fermat's rule into an optimality condition for constrained problems.
+
+     \prop[constrained-fermat]{Fermat's rule with constraints}{
+         Let $C\subset\bbR^d$ be a convex set and $F_0:\bbR^d\to\bbR$ be convex and differentiable. Then $x^\star\in C$ minimizes $F_0$ over $C$ if and only if
+         \begin{equation}
+             \label{eq:constrained-fermat}
+             -\nabla F_0(x^\star) \in \mcN_C(x^\star).
+         \end{equation}
+     }
+
+     \begin{proof}
+         Assume \eqref{eq:constrained-fermat}, that is $\langle \nabla F_0(x^\star), z-x^\star\rangle\ge 0$ for any $z\in C$. By the characterization of convexity for differentiable functions (Proposition~\ref{prop:convexity-diff}), we have $F_0(z)\ge F_0(x^\star) + \langle \nabla F_0(x^\star), z-x^\star\rangle \ge F_0(x^\star)$ for any $z\in C$, so $x^\star$ is a minimizer.
+
+         Conversely, let $x^\star$ be a minimizer and let $z\in C$. By convexity of $C$, the point $x^\star + t(z-x^\star)$ belongs to $C$ for any $t\in [0,1]$, whence
+         \begin{equation}
+             \langle \nabla F_0(x^\star), z-x^\star\rangle
+             = \lim_{t\to 0^+} \frac{F_0(x^\star+t(z-x^\star)) - F_0(x^\star)}{t} \ge 0,
+         \end{equation}
+         since the numerator is non-negative for any $t\in[0,1]$.
+     \end{proof}
+
+     Applying this with $C=\feas$ shows that optimality for \eqref{eq:op} is the single inclusion $-\nabla F_0(x^\star)\in \mcN_{\feas}(x^\star)$. This condition is geometric but not usable, since it involves the feasible set as a whole. Comparing it with \eqref{eq:kkt-active}, we see what the KKT theorem provides: an explicit description of the normal cone in terms of the data of the problem. Setting
+     \begin{equation}
+         \mcK(x^\star) = \operatorname{ran}(A^\top) + \operatorname{cone}\left\{ \nabla F_j(x^\star) \mid j\in \mcA(x^\star) \right\},
+     \end{equation}
+     one always has $\mcK(x^\star)\subset \mcN_{\feas}(x^\star)$, and the content of Theorem~\ref{th:kkt-necessary} is that under a constraint qualification the two cones coincide at a minimizer. The role of Slater's condition is precisely to prevent $\mcK(x^\star)$ from being too small, which is what happens when the constraints describe $\feas$ in a degenerate way.
+
+     \ex[kkt-degenerate]{Failure of the qualification}{
+         Take $d=1$, no equality constraints, a single inequality constraint $F_1(x)=x^2\le0$, and the objective $F_0(x)=x$. The feasible set is $\feas=\{0\}$, so $x^\star=0$ is the unique minimizer and $p^\star=0$. Slater's condition fails, since $F_1$ is never negative.
+
+         The constraint is active at $x^\star$, but $\nabla F_1(0)=0$, so that $\mcK(0)=\{0\}$, whereas $\mcN_{\feas}(0)=\bbR$. Since $-\nabla F_0(0)=-1$, stationarity \eqref{eq:kkt-active} fails for every choice of multiplier, and no KKT triple exists.
+
+         On the dual side, $L(x,\nu)=x+\nu x^2$, so that $H(\nu)=-1/(4\nu)$ for $\nu>0$ and $H(0)=-\infty$. Hence $d^\star = \sup_{\nu>0} H(\nu)= 0 = p^\star$: strong duality does hold, but the supremum is not attained. This is why Theorem~\ref{th:kkt-necessary} asks for both optimal values to be attained, and not merely for the duality gap to vanish.
+     }
+
+     \subsection{The non-differentiable case}
+
+     Nothing above used differentiability except through Fermat's rule, and the subdifferential of Section~\ref{sec:conjugate-fct} removes that restriction. The bridge is the following identity, which is immediate from the definitions: for a convex set $C$ and $x\in C$,
+     \begin{equation}
+         \label{eq:subdiff-char-normal-cone}
+         \partial \chi_C(x) = \mcN_C(x),
+     \end{equation}
+     where $\chi_C$ is the $0-\infty$ characteristic function of \eqref{eq:0-infty-char}. Indeed, $v\in\partial\chi_C(x)$ means $\chi_C(z)\ge \chi_C(x)+\langle v,z-x\rangle$ for any $z\in\bbR^d$, which is vacuous for $z\notin C$ and reads $\langle v,z-x\rangle\le0$ for $z\in C$.
+
+     Recalling that \eqref{eq:op} is equivalent to minimizing $F_0+\chi_{\feas}$ over $\bbR^d$, Theorem~\ref{th:suff-cond-minimum} and \eqref{eq:subdiff-char-normal-cone} give that $x^\star$ is optimal if and only if
+     \begin{equation}
+         0 \in \partial F_0(x^\star) + \mcN_{\feas}(x^\star),
+     \end{equation}
+     which is the non-smooth form of Proposition~\ref{prop:constrained-fermat}. Correspondingly, the stationarity condition \eqref{eq:kkt-stationarity} becomes
+     \begin{equation}
+         \label{eq:kkt-nonsmooth}
+         0 \in \partial F_0(x^\star) + A^\top \xi^\star + \sum_{j=1}^M \nu_j^\star \,\partial F_j(x^\star),
+     \end{equation}
+     the other three KKT conditions being unchanged. The proofs of Theorems~\ref{th:kkt-sufficient} and \ref{th:kkt-necessary} go through verbatim. The one new ingredient is that writing the subdifferential of $L(\cdot,\xi^\star,\nu^\star)$ as the sum appearing in \eqref{eq:kkt-nonsmooth} requires a sum rule for subdifferentials, which holds under the same kind of qualification assumptions. We refer to \cite{rockafellarConvex2015} for this point.
+
+     \ex[kkt-l1]{Dual certificates for $\ell_1$-minimization}{
+         Let us return to the $\ell_1$-minimization problem
+         \begin{equation}
+             \min_{x\in \bbR^d} \|x\|_1 \qquad\text{subject to}\qquad Ax=y.
+         \end{equation}
+         There are no inequality constraints, so Theorem~\ref{th:slater} gives strong duality as soon as the problem is feasible, and the KKT conditions are necessary and sufficient. Since $\|\cdot\|_1$ is not differentiable we use \eqref{eq:kkt-nonsmooth}, which here reads $-A^\top\xi^\star \in \partial \|\cdot\|_1(x^\star)$. As $\|\cdot\|_1$ is separable, its subdifferential is computed coordinatewise from the scalar case, and setting $\eta = -\xi^\star$ we obtain that $x^\star$ is a minimizer if and only if $Ax^\star=y$ and there exists $\eta\in\bbR^m$ with
+         \begin{equation}
+             \label{eq:dual-certificate}
+             (A^\top \eta)_i = \operatorname{sgn}(x^\star_i) \quad \text{if } x^\star_i \neq 0,
+             \qquad\text{and}\qquad
+             |(A^\top\eta)_i| \le 1 \quad \text{if } x^\star_i=0.
+         \end{equation}
+         Such an $\eta$ is called a \emph{dual certificate} for $x^\star$: exhibiting one proves optimality, with no need to solve the problem. Observe that \eqref{eq:dual-certificate} forces $\|A^\top\eta\|_\infty\le1$, which is exactly the feasibility constraint of the dual problem computed in Example~\ref{ex:l1-min}. Observe also that the certificate is rigid only on the support of $x^\star$ and leaves $A^\top\eta$ free, up to the bound, everywhere else. The sparser $x^\star$ is, the easier such an $\eta$ is to find, which is the mechanism by which $\ell_1$-minimization favors sparse solutions.
+     }
+
+     \ex[kkt-ridge]{Least squares under a norm constraint}{
+         Given $A\in\bbR^{m\times d}$, $y\in\bbR^m$ and $\tau>0$, consider
+         \begin{equation}
+             \min_{x\in \bbR^d} \frac12\|Ax-y\|_2^2
+             \qquad\text{subject to}\qquad
+             \|x\|_2^2 - \tau \le 0.
+         \end{equation}
+         Slater's condition holds, since $x=0$ is strictly feasible, and the objective is coercive on the feasible set, so a minimizer exists and the KKT conditions characterize it. Stationarity reads
+         \begin{equation}
+             A^\top(Ax^\star - y) + 2\nu^\star x^\star = 0,
+             \qquad\text{that is}\qquad
+             x^\star = \left( A^\top A + 2\nu^\star \idty \right)^{-1} A^\top y,
+         \end{equation}
+         the inverse being well defined as soon as $\nu^\star>0$. Complementary slackness leaves exactly two possibilities. Either $\nu^\star=0$, and then $x^\star$ is an unconstrained least squares solution, which is consistent only if it happens to satisfy $\|x^\star\|_2^2\le\tau$. Or $\nu^\star>0$, and then the constraint is active, $\|x^\star\|_2^2=\tau$, and this scalar equation determines $\nu^\star$.
+
+         In both cases the formula for $x^\star$ says that $x^\star$ is the unconstrained minimizer of
+         \begin{equation}
+             \frac12\|Ax-y\|_2^2 + \nu^\star \|x\|_2^2,
+         \end{equation}
+         which is the Tikhonov, or ridge, regularization of the least squares problem. We have thus recovered, on an explicit example, the equivalence between constrained and penalized problems given by Theorem~\ref{th:penalty-method}, together with the dictionary $\lambda=\nu^\star$ relating the constraint level $\tau$ to the penalization parameter.
+     }
+
+     The KKT conditions are not confined to finite dimensions. We will see in Section~\ref{sec:pmp-lagrangian} that the Pontryagin Maximum Principle of optimal control theory is the KKT theorem for a problem whose constraint is a differential equation, with the adjoint state as Lagrange multiplier.
  
  
      \chapter{Numerical methods for (non)convex optimization}
@@ -1864,6 +2050,10 @@
  
  \begin{remark}
      For the signal denoising example, it is possible to derive a closed form expression for $x_n$ and $y_n$.
+ \end{remark}
+
+ \begin{remark}
+     The fixed points of the above iteration are exactly the KKT triples of \eqref{eq:f+g+A-dual}, in the non-smooth form \eqref{eq:kkt-nonsmooth}. Indeed, at a fixed point $(x^\star,y^\star,z^\star)$ the third line gives $Ax^\star=y^\star$, which is primal feasibility, while the first two lines give $-A^\top z^\star\in \partial f(x^\star)$ and $z^\star \in \partial g(y^\star)$, which together are the stationarity of the Lagrange function $L(x,y,\xi)=f(x)+g(y)+\langle \xi,Ax-y\rangle$. There are no inequality constraints here, so dual feasibility and complementary slackness are vacuous. The dual variable $z_n$ is thus an approximation of the optimal multiplier, and the algorithm may be read as a search for a KKT triple.
  \end{remark}
  
  \begin{proof}

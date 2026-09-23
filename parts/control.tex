@@ -1001,79 +1001,179 @@ We then have the following, to be compared with the geometric interpretation for
 
 % \end{itemize}
 
-\subsection{Lagrangian interpretation of PMP for LQ problems}
+\section{The PMP as a Karush-Kuhn-Tucker condition}
+\label{sec:pmp-lagrangian}
+
+Theorem~\ref{th:pmp} was obtained by geometric means, from the fact that the optimal extended endpoint lies on the boundary of the extended reachable set. We now revisit it from the point of view of Section~\ref{sec:kkt} and show that it is the KKT theorem applied to a problem whose constraint is a differential equation.
 
 For simplicity, in this section we assume $Q=0$, so that the running cost takes the form
-\[
-c(x,u) = \frac{1}{2} \left( x^\top R x + u^\top P u \right).
-\]
-Let $\Lip([0,T], \mathbb{R}^n)$ denote the space of Lipschitz functions $x:[0,T]\to \mathbb{R}^n$, endowed with the norm 
-\[
-\|x\|_{\Lip} := \|x\|_\infty + L_x,
-\] 
+\begin{equation}
+    c(x,u) = \frac{1}{2} \left( x^\top R x + u^\top P u \right).
+\end{equation}
+Let $\Lip([0,T], \bbR^n)$ denote the space of Lipschitz functions $x:[0,T]\to \bbR^n$, endowed with the norm
+\begin{equation}
+    \|x\|_{\Lip} := \|x\|_\infty + L_x,
+\end{equation}
 where $L_x$ is the Lipschitz constant of $x$. Consider the extended cost functional
 \begin{equation}
-    J: \Lip([0,T],\mathbb{R}^n) \times L^\infty([0,T],\mathbb{R}^m) \to \mathbb{R}, 
+    J: \Lip([0,T],\bbR^n) \times L^\infty([0,T],\bbR^m) \to \bbR,
     \qquad
     J(x,u) = \int_0^T c(x(t),u(t))\, dt.
 \end{equation}
-Then, the linear–quadratic optimal control problem \eqref{eq:ocp-linear} can be rewritten as an infinite-dimensional optimization problem with dynamical constraints:
+The key change of viewpoint is to stop regarding the trajectory $x$ as a function of the control $u$, and to treat the pair $(x,u)$ as a single unknown subject to a constraint. The linear-quadratic optimal control problem \eqref{eq:ocp-linear} then becomes an infinite-dimensional optimization problem with constraints, in the sense of Chapter~\ref{chp:optimization-problems}:
 \begin{equation}
-    \min_{(x,u) \in \Lip([0,T],\mathbb{R}^n) \times L^\infty([0,T],\mathbb{R}^m)} 
+    \label{eq:ocp-as-op}
+    \min_{(x,u) \in \Lip([0,T],\bbR^n) \times L^\infty([0,T],\bbR^m)}
     J(x,u)
     \quad \text{subject to} \quad
-    \dot x = A x + B u, \quad x(0)=x_0, \quad x(T)=x_1.
+    \dot x - A x - B u = 0, \quad x(0)=x_0, \quad x(T)=x_1.
 \end{equation}
 
-Following the ideas of Chapter~\ref{chp:optimization-problems}, we introduce the Lagrangian
+All the constraints in \eqref{eq:ocp-as-op} are equalities, so the problem is the infinite-dimensional analogue of \eqref{eq:op} with no inequality constraints, that is, with $M=0$. The only structural difference with the finite-dimensional setting is that the constraint $\dot x - Ax - Bu=0$ is not a single scalar equation but one equation for every time $t\in[0,T]$. Its multiplier is therefore not a vector but a function of time, which is exactly the costate.
+
+\subsection{The Lagrange function of the optimal control problem}
+
+Following the ideas of Chapter~\ref{chp:optimization-problems}, we introduce the Lagrange function
 \begin{equation}
-    \mathcal{L}(x,u,p) := \frac12 \int_0^T \big( x^\top R x + u^\top P u \big)\, dt
+    \label{eq:ocp-lagrangian}
+    \mcL(x,u,p) := \frac12 \int_0^T \big( x^\top R x + u^\top P u \big)\, dt
     + \int_0^T p^\top (\dot x - A x - B u)\, dt,
 \end{equation}
-where $p \in \Lip([0,T], \mathbb{R}^n)$ is the Lagrange multiplier associated with the dynamical constraint $\dot x = Ax + Bu$. 
+where $p \in \Lip([0,T], \bbR^n)$ is the Lagrange multiplier associated with the dynamical constraint. The duality pairing $\int_0^T p^\top(\dot x - Ax-Bu)\, dt$ plays here the role played by $\langle \xi, Ax-y\rangle$ in the finite-dimensional Lagrange function. The correspondence between the two settings is summarized in Table~\ref{tab:kkt-pmp}.
 
-Integrating the term $\int_0^T p^\top \dot x\, dt$ by parts and using the boundary conditions $x(0)=x_0$, $x(T)=x_1$ gives
+\begin{table}[ht]
+    \centering
+    \small
+    \begin{tabular}{@{}ll@{}}
+        \toprule
+        Finite-dimensional problem \eqref{eq:op}                & Optimal control problem \eqref{eq:ocp-as-op}                       \\
+        \midrule
+        variable $x\in\bbR^d$                                   & pair $(x,u)$, trajectory and control                               \\
+        equality constraint $Ax-y=0$                            & $\dot x - Ax-Bu=0$, one equation per $t\in[0,T]$                   \\
+        multiplier $\xi\in\bbR^m$                               & costate $p\in \Lip([0,T],\bbR^n)$                                  \\
+        pairing $\langle \xi, Ax-y\rangle$                      & $\int_0^T p^\top(\dot x - Ax-Bu)\, dt$                             \\
+        $L = F_0 + \langle \xi, Ax-y\rangle$                    & $\mcL = \int_0^T c\, dt + \int_0^T p^\top(\dot x - Ax-Bu)\, dt$    \\
+        stationarity $\nabla_x L=0$                             & adjoint equation and maximization condition                        \\
+        stationarity $\nabla_\xi L = 0$                         & the state equation itself                                          \\
+        endpoint constraints                                    & boundary terms, giving the transversality conditions               \\
+        constraint qualification                                & controllability of the pair $(A,B)$                                \\
+        inequality constraints and $\nu\ge0$                    & control constraints $u(t)\in U$                                    \\
+        \bottomrule
+    \end{tabular}
+    \caption{The dictionary between the KKT conditions of Section~\ref{sec:kkt} and the Pontryagin Maximum Principle.}
+    \label{tab:kkt-pmp}
+\end{table}
+
+Integrating the term $\int_0^T p^\top \dot x\, dt$ by parts, we obtain
 \begin{equation}
-    \mathcal{L}(x,u,p) 
+    \label{eq:ocp-lagrangian-ibp}
+    \mcL(x,u,p)
     = \frac12 \int_0^T \big( x^\top R x + u^\top P u \big)\, dt
-    - \int_0^T p^\top (A x + B u)\, dt
-    + p(T)^\top x_1 - p(0)^\top x_0 - \int_0^T \dot p^\top x \, dt.
+    - \int_0^T \left( \dot p^\top x + p^\top (A x + B u) \right)\, dt
+    + p(T)^\top x(T) - p(0)^\top x(0).
 \end{equation}
+In this form the multiplier appears undifferentiated, so that $\mcL$ may be differentiated with respect to $x$ without any integration by parts left to perform. Observe that the last two terms are entirely determined by the boundary conditions, and are thus constant for admissible variations. They will nonetheless play a role in Section~\ref{sec:lq-no-terminal}, where the terminal state is not prescribed.
+
+\subsection{Stationarity}
 
 An optimal solution $(x^\star, u^\star)$ should satisfy the stationarity condition
 \begin{equation}
-    \frac{\partial}{\partial (x,u)} \mathcal{L}(x^\star, u^\star, p) = 0
-    \qquad \text{for some } p \in \Lip([0,T], \mathbb{R}^n).
+    \frac{\partial}{\partial (x,u)} \mcL(x^\star, u^\star, p) = 0
+    \qquad \text{for some } p \in \Lip([0,T], \bbR^n).
 \end{equation}
-By considering appropriate variations of $\mathcal{L}$ with respect to $x$ and $u$, concentrated on small time intervals, it is possible to show that the above condition is equivalent to the corresponding pointwise conditions (i.e., without integration in time).
+By considering variations of $\mcL$ with respect to $x$ and $u$ that are concentrated on small time intervals, it is possible to show that the above condition is equivalent to the corresponding pointwise conditions, i.e., to conditions holding for almost every $t\in[0,T]$ rather than only after integration in time.
 
-This yields the following conditions:
-
+Differentiating \eqref{eq:ocp-lagrangian-ibp} then yields the following.
 \begin{itemize}
-    \item {Variation with respect to $u$:} 
-    \begin{equation}
-        0 %= \frac{\partial \mathcal{L}}{\partial u}(x^\star, u^\star, p)
-          = P u^\star - B^\top p,
-     \end{equation}
-     which gives the optimal feedback law
-     \[
-         u^\star =  P^{-1} B^\top p.
-     \]
-    
-    \item {Variation with respect to $x$:} 
-    \begin{equation}
-        0 %= \frac{\partial \mathcal{L}}{\partial x}(x^\star, u^\star, p)
-          = R x^\star - \dot p - A^\top p,
-    \end{equation}
-    which yields the adjoint (costate) equation
-    \[
-        \dot p = - A^\top p + R x^\star.
-    \]
-\end{itemize}
+    \item \emph{Variation with respect to $u$}, with $x$ and $p$ frozen:
+          \begin{equation}
+              0 = P u^\star - B^\top p,
+          \end{equation}
+          which gives the expression of the optimal control
+          \begin{equation}
+              \label{eq:pmp-lagr-control}
+              u^\star = P^{-1} B^\top p.
+          \end{equation}
 
-Thus, the Pontryagin Maximum Principle (PMP) for the linear–quadratic problem can be interpreted as a first-order stationarity condition for the Lagrangian $\mathcal{L}$, with the adjoint $p$ serving as the Lagrange multiplier for the dynamics.
+    \item \emph{Variation with respect to $x$}, with $u$ and $p$ frozen:
+          \begin{equation}
+              0 = R x^\star - \dot p - A^\top p,
+          \end{equation}
+          which yields the adjoint, or costate, equation
+          \begin{equation}
+              \label{eq:pmp-lagr-adjoint}
+              \dot p = - A^\top p + R x^\star.
+          \end{equation}
+
+    \item \emph{Variation with respect to $p$}: this returns the constraint $\dot x^\star = Ax^\star + Bu^\star$ itself, exactly as $\nabla_\xi L = 0$ returns $Ax=y$ in the finite-dimensional case.
+\end{itemize}
+We have thus recovered the conclusions of Theorem~\ref{th:pmp} for $Q=0$, and with them the interpretation we were after: \emph{the PMP is the stationarity condition of the KKT theorem, and the adjoint state is the Lagrange multiplier of the dynamics.}
+
+\begin{remark}
+    The two conditions \eqref{eq:pmp-lagr-control} and \eqref{eq:pmp-lagr-adjoint} are both readable on the Hamiltonian $H(x,p,u)=p^\top(Ax+Bu)-c(x,u)$ of Theorem~\ref{th:pmp}. Indeed, a direct computation gives
+    \begin{equation}
+        \del{H}{u}(x,p,u) = B^\top p - Pu
+        \qquad\text{and}\qquad
+        \del{H}{x}(x,p,u) = A^\top p - Rx,
+    \end{equation}
+    so that \eqref{eq:pmp-lagr-control} is $\partial_u H = 0$ and \eqref{eq:pmp-lagr-adjoint} is $\dot p = -\partial_x H$. Together with the state equation, which reads $\dot x = \partial_p H$, this is the familiar Hamiltonian form of the PMP. The Hamiltonian is, up to a sign convention, the integrand of the Lagrange function \eqref{eq:ocp-lagrangian}.
+\end{remark}
+
+\subsection{Transversality conditions}
+
+Consider now the boundary terms $p(T)^\top x(T) - p(0)^\top x(0)$ in \eqref{eq:ocp-lagrangian-ibp}, which we have so far ignored. They are what decides the boundary conditions satisfied by the multiplier, and the rule is always the same: \emph{an endpoint that is prescribed leaves the corresponding value of $p$ free, and an endpoint that is free prescribes it.}
+
+Indeed, a variation $\delta x$ of the trajectory contributes $p(T)^\top \delta x(T) - p(0)^\top \delta x(0)$ to the variation of $\mcL$. In problem \eqref{eq:ocp-as-op} both endpoints are prescribed, so admissible variations satisfy $\delta x(0)=\delta x(T)=0$, this contribution vanishes identically, and stationarity says nothing about $p(0)$ and $p(T)$. This is consistent with Theorem~\ref{th:pmp}, where the costate is only determined up to its initial value, which then has to be found by shooting.
+
+The situation changes as soon as the terminal state is released. Consider the problem \eqref{eq:ocp-linear-no-terminal} of Section~\ref{sec:lq-no-terminal}, where $x(T)$ is free but the cost carries the terminal term $\frac12 x(T)^\top W x(T)$ of \eqref{eq:J-no-terminal}. The Lagrange function acquires this term, and $\delta x(T)$ is now arbitrary, so that the vanishing of the variation of $\mcL$ requires
+\begin{equation}
+    \left( W x^\star(T) + p(T) \right)^\top \delta x(T) = 0
+    \qquad \forall \delta x(T)\in\bbR^n,
+    \qquad\text{that is}\qquad
+    p(T) = -W x^\star(T).
+\end{equation}
+This is precisely the terminal condition appearing in Theorem~\ref{th:pmp-no-terminal}, which is thus not an extra ingredient of the theory but a consequence of the same stationarity principle. Conditions of this kind, obtained from the boundary terms of the Lagrange function, are called \emph{transversality conditions}.
+
+\subsection{Constraint qualification and controllability}
+
+Theorem~\ref{th:kkt-necessary} does not come for free: a minimizer satisfies the KKT conditions only under a constraint qualification, failing which one falls into the situation of Example~\ref{ex:kkt-degenerate}, where no multiplier exists. The same is true here, and we now identify what plays the role of Slater's condition.
+
+The general form of the multiplier rule for a problem $\min J$ under the constraint $G=0$ is
+\begin{equation}
+    \label{eq:fritz-john}
+    p_0 \, DJ_{u^\star} + \xi \circ DG_{u^\star} = 0,
+    \qquad (p_0,\xi)\neq 0,
+    \qquad p_0 \ge 0,
+\end{equation}
+which is symmetric in the objective and the constraint. The KKT form is the normalization $p_0=1$ of \eqref{eq:fritz-john}, and it is licit exactly when the differential $DG_{u^\star}$ of the constraint is surjective, since it is then impossible to have $p_0=0$. When surjectivity fails, one may be forced to take $p_0=0$, and the multiplier then carries no information about the cost. This is the \emph{abnormal} case.
+
+For problem \eqref{eq:ocp-linear} the constraint map is the endpoint map $u\mapsto \End_{x_0,T}(u)$, whose differential is, by linearity, the endpoint map $\End_{0,T}$ itself. Its surjectivity is precisely controllability, that is the Kalman rank condition on the pair $(A,B)$. \emph{The constraint qualification of the PMP is controllability.}
+
+This is a literal reading of the proof of Theorem~\ref{th:pmp}, not an analogy. There, controllability is invoked to show that the projection of $\operatorname{ran}L$ on the first $n$ coordinates is surjective, hence that $\operatorname{ran} L$ is the graph of a linear form $p_T$ rather than a subspace of $\bbR^{n+1}$ meeting the last coordinate axis. In the language of \eqref{eq:fritz-john}, the annihilator of $\operatorname{ran}L$ is spanned by $(-p_T,1)$, whose last entry is the normalization $p_0=1$. Had controllability failed, that annihilator could have contained a covector of the form $(\xi,0)$, which is the abnormal case.
+
+\subsection{Why a maximum principle}
+
+One question remains: the conditions derived above are stationarity conditions, whereas Theorem~\ref{th:pmp} states a maximization property of the Hamiltonian. The two agree here because the control is unconstrained, so that \eqref{eq:pmp-lagr-control} together with the concavity of $H$ in $u$ makes $u^\star(t)$ the global maximizer of $H(x^\star(t),p(t),\cdot)$.
+
+The distinction becomes real as soon as the control is required to take values in a closed convex set $U\subset\bbR^m$, as happens in any realistic model where actuators saturate. This is the counterpart of the inequality constraints of \eqref{eq:op}, and the answer is the one given in Section~\ref{sec:kkt-geometry}: variations are then one-sided, and stationarity has to be replaced by a normal cone inclusion. Namely, for almost every $t\in[0,T]$,
+\begin{equation}
+    \left\langle P u^\star(t) - B^\top p(t),\, v-u^\star(t) \right\rangle \ge 0
+    \qquad \forall v\in U,
+    \qquad\text{that is}\qquad
+    \del{H}{u}\big(x^\star(t),p(t),u^\star(t)\big) \in \mcN_U\big(u^\star(t)\big).
+\end{equation}
+By Proposition~\ref{prop:constrained-fermat} applied to the concave function $H(x^\star(t),p(t),\cdot)$, this is equivalent to
+\begin{equation}
+    u^\star(t) \in \arg\max_{v\in U} H\big(x^\star(t),p(t),v\big),
+\end{equation}
+which is the maximization condition in its general form. In other words, the PMP is called a maximum principle rather than a stationarity principle because it is the normal cone form of the KKT conditions, and this form is the only one available once the control set has a boundary. When $U=\bbR^m$ the normal cone is trivial and the maximization collapses back to $\partial_u H = 0$.
+
+\begin{remark}
+    For nonlinear systems, where the dynamics $f(t,x,u)$ need not be affine in $u$ and the cost need not be convex, the maximization condition is genuinely stronger than stationarity: the PMP asserts that $u^\star(t)$ maximizes the Hamiltonian globally over $U$, and not merely that it is a critical point of it. Recovering this global statement requires the needle variations of Pontryagin rather than the smooth variations used above, and we refer to \cite{agrachevControl2022,trelatControle2005} for the general theory.
+\end{remark}
 
 \section{Linear-quadratic problems with unconstrained terminal state}
+\label{sec:lq-no-terminal}
 
 The PMP given in Theorem~\ref{th:pmp} for problem \eqref{eq:ocp-linear} presents an important drawback: even though the control $u^\star$ is completely determined by the pair $(x^\star,p^\star)$, the ODE determining the latter cannot be easily solved due to the fact that the boundary conditions are on $x^\star(0)=x_0$ and $x^\star (T)=x_1$. 
 Namely, $p^\star$ is determined implicitly and is typically found by ``shooting'' methods (i.e., one chooses initial conditions $x^\star(0)=x_0$ and $p^\star(0)=\lambda$ and then looks for $\lambda$ such that $x^\star(T)=x_1$).
