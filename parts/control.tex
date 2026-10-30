@@ -803,14 +803,17 @@ We henceforth consider the following assumptions.
     \end{itemize}
 }
 
-The first assumption ensures that the system is controllable, and thus that the optimal control problem \eqref{eq:ocp-linear} can have a solution. 
-By the first item of Theorem~\ref{th:ocp-existence-linear}, the second assumption is necessary for \eqref{eq:ocp-linear} to have a solution on $[0,T_{\max}]$ for some $x_0,x_1\in\bbR^n$.
-By itself, it does not guarantee the existence of a solution for every $x_0,x_1\in\bbR^n$, as Example~\ref{ex:lq-nonneg-not-enough} shows with $T_{\max}=\pi$.
-By the second item of Theorem~\ref{th:ocp-existence-linear}, existence for every $x_0,x_1\in\bbR^n$ holds as soon as $J$ is coercive on $\Omega_{0,0,T}$, which in Example~\ref{ex:lq-nonneg-not-enough} is the case for every $T<T_{\max}$.
-When $P$ is positive definite, this is a general fact, related to the absence of conjugate times in $(0,T_{\max})$, and we refer to \cite{jurdjevicGeometric1997} for this and for the degenerate case.
-The third assumption is more convenient than essential.
-It rules out the degenerate case where $c$ is an exact differential along the trajectories of the system, in which case $J$ is constant on $\Omega_{x_0,x_1,T}$ and every control in it is optimal.
-For instance, if $\dot x = u$ and $c(x,u) = ux$, then $J(u) = \frac12(x_1^2-x_0^2)$ for every $u\in\Omega_{x_0,x_1,T}$.
+Some comments on these assumptions are in order.
+\begin{itemize}
+    \item The first assumption ensures that the system is controllable, and thus that the optimal control problem \eqref{eq:ocp-linear} can have a solution.
+    \item By the first item of Theorem~\ref{th:ocp-existence-linear}, the second assumption is necessary for \eqref{eq:ocp-linear} to have a solution on $[0,T_{\max}]$ for some $x_0,x_1\in\bbR^n$.
+    By itself, it does not guarantee the existence of a solution for every $x_0,x_1\in\bbR^n$, as Example~\ref{ex:lq-nonneg-not-enough} shows with $T_{\max}=\pi$.
+    By the second item of Theorem~\ref{th:ocp-existence-linear}, existence for every $x_0,x_1\in\bbR^n$ holds as soon as $J$ is coercive on $\Omega_{0,0,T}$, which in Example~\ref{ex:lq-nonneg-not-enough} is the case for every $T<T_{\max}$.
+    When $P$ is positive definite, this is a general fact, related to the absence of conjugate times in $(0,T_{\max})$, and we refer to \cite{jurdjevicGeometric1997} for this and for the degenerate case.
+    \item The third assumption is more convenient than essential.
+    It rules out the degenerate case where $c$ is an exact differential along the trajectories of the system, in which case $J$ is constant on $\Omega_{x_0,x_1,T}$ and every control in it is optimal.
+    For instance, if $\dot x = u$ and $c(x,u) = ux$, then $J(u) = \frac12(x_1^2-x_0^2)$ for every $u\in\Omega_{x_0,x_1,T}$.
+\end{itemize}
 
 An important consequence of the third assumption is the following.
 
