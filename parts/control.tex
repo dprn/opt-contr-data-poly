@@ -709,11 +709,13 @@ The first question to be answered is the existence of solutions to the correspon
 \end{equation}
 
 \thm[ocp-existence-linear]{Existence of solution to \eqref{eq:ocp-linear}}{
-    An optimal solution for \eqref{eq:ocp-linear} exists if and only if 
-    \begin{equation}
-        J(u) \ge 0 \qquad \forall u \in \Omega_{0,0,T}.
-    \end{equation}
-    If, moreover, there exists $\alpha>0$ such that $J(u)>\alpha\|u\|_2^2$ for all $u\in \Omega_{0,0,T}$ then the optimal solution is unique.
+    \begin{enumerate}
+        \item There exist $x_0,x_1\in \bbR^n$ for which \eqref{eq:ocp-linear} admits an optimal solution if and only if
+        \begin{equation}
+            J(u) \ge 0 \qquad \forall u \in \Omega_{0,0,T}.
+        \end{equation}
+        \item If there exists $\alpha>0$ such that $J(u)\ge\alpha\|u\|_2^2$ for all $u\in \Omega_{0,0,T}$, then \eqref{eq:ocp-linear} admits a unique optimal solution for every $x_0,x_1\in\bbR^n$ such that $\Omega_{x_0,x_1,T}\neq\emptyset$.
+    \end{enumerate}
 }
 
 \begin{proof}
@@ -732,40 +734,64 @@ The first question to be answered is the existence of solutions to the correspon
         \qquad \forall t\in [0,T]
     \end{equation}
     
-    Assume that $u$ is optimal. In particular, $J(u_\lambda)\ge J(u)$ for all $\lambda\in \bbR$ and $\tilde u\in \Omega_{0,0,T}$. Hence, integrating \eqref{eq:aaaa} over $[0,T]$, we then have 
+    We start with the first item.
+    Assume that $u$ is optimal for some $x_0,x_1\in\bbR^n$. In particular, $J(u_\lambda)\ge J(u)$ for all $\lambda\in \bbR$ and $\tilde u\in \Omega_{0,0,T}$. Hence, integrating \eqref{eq:aaaa} over $[0,T]$, we then have 
     \begin{equation}
        \lambda^2 \underbrace{\int_0^T c(\tilde x, \tilde u)\, dt}_{=J(\tilde u)} + \lambda \int_0^T \left[\tilde u^\top P u + \tilde u^\top Q x + u^\top Q \tilde x + \tilde x^\top Rx \right] \, dt \ge 0, 
        \qquad \forall \lambda\in \bbR, \, \tilde u\in \Omega_{0,0,T}.
     \end{equation}
     This immediately yields $J(\tilde u)\ge 0$ for all $\tilde u\in \Omega_{0,0,T}$.
 
-    Let us now prove the converse implication.
-    Assume that $J(\tilde u)\ge 0$ for all $\tilde u\in \Omega_{0,0,T}$.
-    Up to fixing any $u_0\in \Omega_{x_0,x_1,T}$, we have that for any $u\in \Omega_{x_0,x_1,T}$ it holds $u - u_0 \in \Omega_{0,0,T}$, i.e., $u=u_0+\tilde u$ for some $\tilde u\in \Omega_{0,0,T}$. Hence, minimizing $J$ over $\Omega_{x_0,x_1,T}$ is equivalent to minimizing the functional $J(u_0+\tilde u)$ over $\tilde u\in \Omega_{0,0,T}$.
+    Conversely, assume that $J(\tilde u)\ge 0$ for all $\tilde u\in \Omega_{0,0,T}$.
+    The null control $u\equiv0$ belongs to $\Omega_{0,0,T}$ and satisfies $J(0)=0\le J(\tilde u)$ for all $\tilde u\in\Omega_{0,0,T}$.
+    Hence, it is an optimal solution of \eqref{eq:ocp-linear} with $x_0=x_1=0$.
+
+    Let us now prove the second item.
+    Fix $x_0,x_1\in\bbR^n$ and $u_0\in \Omega_{x_0,x_1,T}$, and let $y_0$ be the trajectory associated with $u_0$.
+    For any $u\in \Omega_{x_0,x_1,T}$ it holds $u - u_0 \in \Omega_{0,0,T}$, i.e., $u=u_0+\tilde u$ for some $\tilde u\in \Omega_{0,0,T}$. Hence, minimizing $J$ over $\Omega_{x_0,x_1,T}$ is equivalent to minimizing the functional $J(u_0+\tilde u)$ over $\tilde u\in \Omega_{0,0,T}$.
     From \eqref{eq:aaaa} with $\lambda=1$, this is equivalent to minimizing the functional $\phi:\Omega_{0,0,T}\to \bbR$ defined as
     \begin{equation}
-        \phi(\tilde u) = J(\tilde u) + L \tilde u, 
-        \qquad \text{where } 
-        L \tilde u :=\int_0^T \left[\tilde u^\top P u_0 + \tilde u^\top Q x_0 + u_0^\top Q \tilde x + \tilde x^\top Rx_0 \right] \, dt, 
+        \label{eq:phi-lq}
+        \phi(\tilde u) = J(\tilde u) + L \tilde u,
+        \qquad \text{where }
+        L \tilde u :=\int_0^T \left[\tilde u^\top P u_0 + \tilde u^\top Q y_0 + u_0^\top Q \tilde x + \tilde x^\top Ry_0 \right] \, dt.
     \end{equation}
-    Here, $J$ is a quadratic form and $L$ is a linear functional. 
-    Even though the problem is posed on $\Omega_{0,0,T}\subset L^\infty([0,T],\bbR^m)$, we can equivalently consider it on the Hilbert space $X\subset L^2([0,T],\bbR^m)$ of $L^2$ controls steering the system from $0$ to itself in time $T$, since $L^\infty$ is dense in $L^2$ and both $J$ and $L$ extends continuously to the latter.
-    Here, $x_0$ denotes the trajectory associated with $u_0$.
-    Let $N = \{\tilde u\in X\mid J(\tilde u)=0\}$, which is a linear subspace since $J$ is a non-negative quadratic form, and observe that $\ker(L)\supset N$. Indeed, if this was not the case $\phi(\lambda \tilde u)=\lambda L\tilde u$ would be unbounded from below for $\tilde u\in N$ such that $L\tilde u <0$ and $\lambda\to +\infty$, contradicting the fact that $\phi$ is bounded from below by $-J(u_0)$.
-
-    Let now $N^\perp$ be the orthogonal complement of $N$ in $X$.
-    Since $J$ is non-negative by assumption, it is strictly positive on $N^\perp\setminus\{0\}$.
-     We admit here that it is in fact coercive on $N^\perp$, i.e., that there exists $\alpha>0$ with $J(\tilde u)\ge \alpha\|\tilde u\|_{L^2}^2$ for $\tilde u\in N^\perp$, which is where the assumption $P\in\sym_{\ge0}(\bbR^m)$ of Proposition~\ref{prop:P-semi-def} enters, and we refer to \cite{jurdjevicGeometric1997} for the details.
-     Thus, $\phi$ is continuous, coercive and strictly convex on $N^\perp$. 
-    In particular, there exists a unique $\tilde u^\star \in N^\perp$ such that 
+    Here, $J$ is a quadratic form and $L$ is a linear functional, and $\phi(\tilde u) = J(u_0+\tilde u)-J(u_0)$.
+    Even though the problem is posed on $\Omega_{0,0,T}\subset L^\infty([0,T],\bbR^m)$, we can equivalently consider it on the Hilbert space $X\subset L^2([0,T],\bbR^m)$ of $L^2$ controls steering the system from $0$ to itself in time $T$, since $L^\infty$ is dense in $L^2$ and both $J$ and $L$ extend continuously to the latter.
+    By continuity, the inequality $J(\tilde u)\ge\alpha\|\tilde u\|_2^2$ holds for all $\tilde u\in X$.
+    Thus, $\phi$ is continuous, coercive and strictly convex on $X$.
+    In particular, there exists a unique $\tilde u^\star \in X$ such that
     \begin{equation}
-        \phi(\tilde u^\star) = \min_{\tilde u\in N^\perp} \phi(\tilde u).
+        \phi(\tilde u^\star) = \min_{\tilde u\in X} \phi(\tilde u).
     \end{equation}
-    Since $\phi$ is zero on $N$, it follows that $\tilde u^\star$ is a minimizer of $\phi$ on the whole $X$.
-    To conclude the proof of the converse implication it then suffices to observe that $\tilde u^\star\in \Omega_{0,0,T}$. We omit a precise argument for this fact, but this can be done exploiting the necessary conditions for optimality of the Pontryagin Maximum Principle, to be presented in the next section.
-
-    Finally, if $J(u)\ge \alpha\|u\|_2^2$ for all $u\in \Omega_{0,0,T}$, then $J$ is strictly convex on $\Omega_{0,0,T}$, thus on $X$, and thus the minimizer is unique.
+    To conclude the proof it then suffices to observe that $\tilde u^\star\in \Omega_{0,0,T}$, so that $u_0+\tilde u^\star$ is the unique optimal solution. We omit a precise argument for this fact, but this can be done exploiting the necessary conditions for optimality of the Pontryagin Maximum Principle, to be presented in the next section.
 \end{proof}
+
+The gap between the two items of Theorem~\ref{th:ocp-existence-linear} is genuine.
+Assume only that $J\ge0$ on $\Omega_{0,0,T}$, and let $N = \{\tilde u\in X\mid J(\tilde u)=0\}$, which is a linear subspace since $J$ is a non-negative quadratic form.
+With the notation of the proof, $\phi(\lambda\tilde u) = \lambda L\tilde u$ for every $\tilde u\in N$ and $\lambda\in\bbR$.
+Hence, if $L\tilde u\neq0$ for some $\tilde u\in N$, then $J$ is unbounded from below on $\Omega_{x_0,x_1,T}$ and \eqref{eq:ocp-linear} has no solution.
+The condition $N\subset\ker L$ depends on $x_0,x_1$ through $u_0$, and it can fail, as the following example shows.
+
+\ex[lq-nonneg-not-enough]{Non-negativity is not enough}{
+    Let $n=m=1$, $\dot x = u$, and $c(x,u) = \frac12 u^2 - \frac{k^2}2 x^2$ for some $k>0$.
+    For $\tilde u\in\Omega_{0,0,T}$ with trajectory $\tilde x$, we have $\|\tilde u\|_2^2=\int_0^T\dot{\tilde x}^2\,dt$, and the Wirtinger inequality $\int_0^T \dot{\tilde x}^2\,dt\ge (\pi/T)^2\int_0^T\tilde x^2\,dt$ yields
+    \begin{equation}
+        J(\tilde u) \ge \frac12\left(1-\frac{k^2T^2}{\pi^2}\right)\|\tilde u\|_2^2.
+    \end{equation}
+    Hence, $J$ is coercive on $\Omega_{0,0,T}$ for $T<\pi/k$, and the second item of Theorem~\ref{th:ocp-existence-linear} applies.
+
+    Let now $T=\pi/k$.
+    Then $J\ge0$ on $\Omega_{0,0,T}$, and equality in the Wirtinger inequality holds exactly for $\tilde x = a\sin(kt)$, so that $N$ is spanned by $\tilde u_1 = k\cos(kt)$.
+    Fix $x_0,x_1\in\bbR$ and $u_0\in\Omega_{x_0,x_1,T}$ with trajectory $y_0$.
+    Here $L\tilde u = \int_0^T(\tilde u\, \dot y_0 - k^2\tilde x\, y_0)\,dt$, and an integration by parts gives
+    \begin{equation}
+        L\tilde u_1 = \Big[k\cos(kt)\,y_0(t)\Big]_0^T + k^2\int_0^T\sin(kt)\,y_0\,dt - k^2\int_0^T\sin(kt)\,y_0\,dt = -k(x_0+x_1).
+    \end{equation}
+    Therefore, $J(u_0+\lambda\tilde u_1) = J(u_0) - \lambda k(x_0+x_1)$ for all $\lambda\in\bbR$.
+    If $x_0+x_1\neq0$, then $J$ is unbounded from below on $\Omega_{x_0,x_1,T}$ and \eqref{eq:ocp-linear} has no solution, although $J$ is non-negative on $\Omega_{0,0,T}$.
+    The time $T=\pi/k$ is the first \emph{conjugate time} of this problem.
+}
 
 We henceforth consider the following assumptions.
 
@@ -778,7 +804,10 @@ We henceforth consider the following assumptions.
 }
 
 The first assumption ensures that the system is controllable, and thus that the optimal control problem \eqref{eq:ocp-linear} can have a solution. 
-By Theorem~\ref{th:ocp-existence-linear}, the second assumption guarantees the existence of a solution to \eqref{eq:ocp-linear} for any $T<T_{\max}$ and any $x_0,x_1\in \bbR^n$.
+By the first item of Theorem~\ref{th:ocp-existence-linear}, the second assumption is necessary for \eqref{eq:ocp-linear} to have a solution on $[0,T_{\max}]$ for some $x_0,x_1\in\bbR^n$.
+By itself, it does not guarantee the existence of a solution for every $x_0,x_1\in\bbR^n$, as Example~\ref{ex:lq-nonneg-not-enough} shows with $T_{\max}=\pi/k$.
+By the second item of Theorem~\ref{th:ocp-existence-linear}, existence for every $x_0,x_1\in\bbR^n$ holds as soon as $J$ is coercive on $\Omega_{0,0,T}$, which in Example~\ref{ex:lq-nonneg-not-enough} is the case for every $T<T_{\max}$.
+When $P$ is positive definite, this is a general fact, related to the absence of conjugate times in $(0,T_{\max})$, and we refer to \cite{jurdjevicGeometric1997} for this and for the degenerate case.
 The third assumption is a technical condition, and it guarantees the uniqueness of the solution.
 
 An important consequence of the third assumption is the following.
