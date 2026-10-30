@@ -774,23 +774,23 @@ Hence, if $L\tilde u\neq0$ for some $\tilde u\in N$, then $J$ is unbounded from 
 The condition $N\subset\ker L$ depends on $x_0,x_1$ through $u_0$, and it can fail, as the following example shows.
 
 \ex[lq-nonneg-not-enough]{Non-negativity is not enough}{
-    Let $n=m=1$, $\dot x = u$, and $c(x,u) = \frac12 u^2 - \frac{k^2}2 x^2$ for some $k>0$.
+    Let $n=m=1$, $\dot x = u$, and $c(x,u) = \frac12 (u^2 - x^2)$.
     For $\tilde u\in\Omega_{0,0,T}$ with trajectory $\tilde x$, we have $\|\tilde u\|_2^2=\int_0^T\dot{\tilde x}^2\,dt$, and the Wirtinger inequality $\int_0^T \dot{\tilde x}^2\,dt\ge (\pi/T)^2\int_0^T\tilde x^2\,dt$ yields
     \begin{equation}
-        J(\tilde u) \ge \frac12\left(1-\frac{k^2T^2}{\pi^2}\right)\|\tilde u\|_2^2.
+        J(\tilde u) \ge \frac12\left(1-\frac{T^2}{\pi^2}\right)\|\tilde u\|_2^2.
     \end{equation}
-    Hence, $J$ is coercive on $\Omega_{0,0,T}$ for $T<\pi/k$, and the second item of Theorem~\ref{th:ocp-existence-linear} applies.
+    Hence, $J$ is coercive on $\Omega_{0,0,T}$ for $T<\pi$, and the second item of Theorem~\ref{th:ocp-existence-linear} applies.
 
-    Let now $T=\pi/k$.
-    Then $J\ge0$ on $\Omega_{0,0,T}$, and equality in the Wirtinger inequality holds exactly for $\tilde x = a\sin(kt)$, so that $N$ is spanned by $\tilde u_1 = k\cos(kt)$.
+    Let now $T=\pi$.
+    Then $J\ge0$ on $\Omega_{0,0,T}$, and equality in the Wirtinger inequality holds exactly for $\tilde x = a\sin t$, so that $N$ is spanned by $\tilde u_1 = \cos t$.
     Fix $x_0,x_1\in\bbR$ and $u_0\in\Omega_{x_0,x_1,T}$ with trajectory $y_0$.
-    Here $L\tilde u = \int_0^T(\tilde u\, \dot y_0 - k^2\tilde x\, y_0)\,dt$, and an integration by parts gives
+    Here $L\tilde u = \int_0^T(\tilde u\, \dot y_0 - \tilde x\, y_0)\,dt$, and an integration by parts gives
     \begin{equation}
-        L\tilde u_1 = \Big[k\cos(kt)\,y_0(t)\Big]_0^T + k^2\int_0^T\sin(kt)\,y_0\,dt - k^2\int_0^T\sin(kt)\,y_0\,dt = -k(x_0+x_1).
+        L\tilde u_1 = \Big[\cos t\,y_0(t)\Big]_0^\pi + \int_0^\pi\sin t\,y_0\,dt - \int_0^\pi\sin t\,y_0\,dt = -(x_0+x_1).
     \end{equation}
-    Therefore, $J(u_0+\lambda\tilde u_1) = J(u_0) - \lambda k(x_0+x_1)$ for all $\lambda\in\bbR$.
+    Therefore, $J(u_0+\lambda\tilde u_1) = J(u_0) - \lambda (x_0+x_1)$ for all $\lambda\in\bbR$.
     If $x_0+x_1\neq0$, then $J$ is unbounded from below on $\Omega_{x_0,x_1,T}$ and \eqref{eq:ocp-linear} has no solution, although $J$ is non-negative on $\Omega_{0,0,T}$.
-    The time $T=\pi/k$ is the first \emph{conjugate time} of this problem.
+    The time $T=\pi$ is the first \emph{conjugate time} of this problem.
 }
 
 We henceforth consider the following assumptions.
@@ -805,7 +805,7 @@ We henceforth consider the following assumptions.
 
 The first assumption ensures that the system is controllable, and thus that the optimal control problem \eqref{eq:ocp-linear} can have a solution. 
 By the first item of Theorem~\ref{th:ocp-existence-linear}, the second assumption is necessary for \eqref{eq:ocp-linear} to have a solution on $[0,T_{\max}]$ for some $x_0,x_1\in\bbR^n$.
-By itself, it does not guarantee the existence of a solution for every $x_0,x_1\in\bbR^n$, as Example~\ref{ex:lq-nonneg-not-enough} shows with $T_{\max}=\pi/k$.
+By itself, it does not guarantee the existence of a solution for every $x_0,x_1\in\bbR^n$, as Example~\ref{ex:lq-nonneg-not-enough} shows with $T_{\max}=\pi$.
 By the second item of Theorem~\ref{th:ocp-existence-linear}, existence for every $x_0,x_1\in\bbR^n$ holds as soon as $J$ is coercive on $\Omega_{0,0,T}$, which in Example~\ref{ex:lq-nonneg-not-enough} is the case for every $T<T_{\max}$.
 When $P$ is positive definite, this is a general fact, related to the absence of conjugate times in $(0,T_{\max})$, and we refer to \cite{jurdjevicGeometric1997} for this and for the degenerate case.
 The third assumption is more convenient than essential.
